@@ -22,6 +22,8 @@ This chapter addresses the things to consider when implementing a merchant backe
 
 First of all you need to implement the PayEx Mobile Backend REST API. Pick a suitable technology stack for your programming language.
 
+See the [PayEx Mobile Backend API Reference](https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) for more info.
+
 #### Authentication
 
 Your mobile application and the merchant backend should implement an authentication / authorization scheme. In the Mobile SDK, this is enabled by allowing you to supply custom HTTP headers into the requests which your backend may then process. 
@@ -56,6 +58,7 @@ Implement your API in a secure manner over an encrypted TLS connection. The mobi
 
 Here are listed the essential resources needed for the implementation work:
 
+* [PayEx Mobile Backend API Reference](https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) 
 * [PayEx eCommerce API Technical Reference](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/)
 
 ## Examples

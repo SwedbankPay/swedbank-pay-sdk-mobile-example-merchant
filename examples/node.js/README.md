@@ -4,7 +4,7 @@ This is a sample implementation of a PayEx merchant backend implemented in Node.
 
 The core technology stack used is npm, node.js 10, express.js.
 
-The application implemeents the [PayEx Mobile Backend API](TODO) specification and further calls the PayEx eCommerce platform APIs ('PSP') to perform the authentication and payment functions. The server code ships with the secrets required to talk to the PSP. It also presents a naive in-memory data storage solution for storing the merchant data.
+The application implemeents the [PayEx Mobile Backend API Reference](https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) and further calls the PayEx eCommerce platform APIs ('PSP') to perform the authentication and payment functions. The server code ships with the secrets required to talk to the PSP. It also presents a naive in-memory data storage solution for storing the merchant data.
 
 ## Configuration file
 
