@@ -1,0 +1,27 @@
+{
+  "name": "payex-merchant-nodejs-sample",
+  "version": "0.0.1",
+  "description": "Example PayEx Merchant Backend implementation in Node.js.",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git@git.qvik.fi:payex/merchant-backend-sample-nodejs.git"
+  },
+  "dependencies": {
+    "celebrate": "^10.0.1",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "payex"
+  ],
+  "author": "PayEx",
+  "license": "MIT"
+}

@@ -1,0 +1,17 @@
+# Include build/libs directory in Cloud build
+#!build/libs/
+
+build/classes
+build/generated
+build/reports
+build/resources
+build/test-results
+build/tmp
+
+# Exclude everything else pretty much
+src
+README.md
+bin
+gradle*
+settings.gradle
+

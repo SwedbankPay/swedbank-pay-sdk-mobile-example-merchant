@@ -1,0 +1,8 @@
+{
+  "apiKey": "<any-string-here-you-want-to-use>",
+  "merchantToken": "<your-merchant-token-from-payex>",
+  "merchantId": "<your-merchant-id-from-payex>",
+  "countryCode": "SE",
+  "currency": "SEK",
+  "payexBaseUrl": "https://api.externalintegration.payex.com"
+}
