@@ -12,7 +12,7 @@ This document uses the following terminology:
 
 * *SDK* - refers to the PayEx mobile SDK
 * *PSP* - refers to PayEx eCommerce platform
-* *Merchant* - refers to the party using the mobile payments SDK 
+* *Merchant* - refers to the party using the mobile payments SDK (and implementing the corresponding merchant backend)
 
 ## Implementation Guide
 
@@ -20,9 +20,9 @@ This chapter addresses the things to consider when implementing a merchant backe
 
 ### Mobile API 
 
-First of all you need to implement the PayEx Mobile Backend REST API. Pick a suitable technology stack for your programming language.
+First of all you need to implement the PayEx Mobile Backend REST API. Pick a suitable technology stack for your programming language of choice.
 
-See the [PayEx Mobile Backend API Reference](https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) for more info.
+See the [PayEx Mobile Backend API Reference](https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) for more info.
 
 #### Authentication
 
@@ -33,8 +33,6 @@ If this authentication should fail, the merchant backend should then reply with 
 #### Merchant Data
 
 The `POST /paymentorders` API call takes a parameter called `merchantData`. This is to be a free-form JSON object, passed through the API call transparently from the calling mobile SDK to your backend. The contents of this object are arbitrary data used by the Merchant; typically this data would include the used currency along with the purchase amounts and VAT amounts (eg. shopping basket contents).
-
-TODO: link to OpenAPI spec.
 
 ### Data storage
 
@@ -58,7 +56,7 @@ Implement your API in a secure manner over an encrypted TLS connection. The mobi
 
 Here are listed the essential resources needed for the implementation work:
 
-* [PayEx Mobile Backend API Reference](https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) 
+* [PayEx Mobile Backend API Reference](https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) 
 * [PayEx eCommerce API Technical Reference](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/)
 
 ## Examples

@@ -10,6 +10,13 @@ The application implemeents the [PayEx Mobile Backend API Reference](https://raw
 
 The application needs to ship some secrets. It does this naively via `src/main/resources/application.properties` file. This file is not included in the Git repository; instead, there is `src/main/resources/example.application.properties` which you can use as a template for your `application.properties` file. Just replace all the values in `<brackets>` with proper values and you are set.
 
+## Authentication
+
+The sample backend assumes the following HTTP headers to be present in all requests:
+
+* `x-payex-sample-apikey` - A fixed API key. The client applications must store this value securely and include it in all requests.
+* `x-payex-sample-access-token` - an access token identifying the current user / device. The client applications must store this value securely and include it in all requests.
+
 ## Data format
 
 The data format for the `merchantData` parameter in the `POST /paymentorders` API call is as follows:
