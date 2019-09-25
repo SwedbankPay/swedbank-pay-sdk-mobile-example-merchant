@@ -17,7 +17,7 @@ const auth = (req, res, next) => {
 
     if (global.config.apiKey !== apiKey) {
         console.log('Request has a missing or incorrect API key.');
-        res.status(401).send("Unauthorized").end();
+        res.status(401).send('Unauthorized').end();
         return;
     }
 
@@ -25,7 +25,14 @@ const auth = (req, res, next) => {
 
     if (!accessToken) {
         console.log('Request is missing the access token.');
-        res.status(401).send("Unauthorized").end();
+        res.status(401).send('Unauthorized').end();
+        return;
+    }
+
+    // Expect an arbitrary minimum length for the authentication token; 
+    // this can be used for generating a different kind of 401 error for testing
+    if (accessToken.length < 5) {
+        res.status(401).send({ message: 'access token too short' }).end();
         return;
     }
 

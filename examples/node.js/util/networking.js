@@ -29,9 +29,6 @@ const request = async (method, path, body) => {
         opts.body = JSON.stringify(body);
     }
 
-    console.log(`url=${url}`);
-    console.log(`opts=${JSON.stringify(opts)}`);
-
     const response = await fetch(url, opts);
 
     if (response.ok) {

@@ -76,8 +76,7 @@ const createPaymentOrder = (req) => {
         urls: {
             hostUrls: [baseUrl],
             completeUrl: `${baseUrl}/complete`,
-            cancelUrl: `${baseUrl}/cancel`,
-            termsOfServiceUrl: `${baseUrl}/tos`
+            cancelUrl: `${baseUrl}/cancel`
         },
         payeeInfo: {
             payeeId: global.config.merchantId,

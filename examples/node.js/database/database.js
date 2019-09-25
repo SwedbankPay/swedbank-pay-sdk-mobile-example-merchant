@@ -21,7 +21,6 @@ module.exports = class Database {
         // Get an ID for the purchase from our ID sequence
         const id = this.idSequence++;
 
-        console.log(`Inserting new purchase into database with ID ${id}`);
         this.db[id] = purchase;
 
         return id;
@@ -34,9 +33,6 @@ module.exports = class Database {
      * @param pspPurchaseId {string} PSP purchase id
      */
     insertPurchaseIdMapping(purchaseId, pspPurchaseId) {
-        console.log(`Inserting purchase ID mapping: `
-            + `${purchaseId} -> ${pspPurchaseId}`);
-
         this.db[purchaseId].pspPurchaseId = pspPurchaseId;
     }
 
