@@ -4,6 +4,7 @@ const constants = require('./constants.js');
 const contentTypeParser = require('content-type-parser');
 const fetch = require('node-fetch');
 const problemJson = require('problem-json');
+const problems = require('./problems.js');
 
 /**
  * Attempts to read a json response.
@@ -26,49 +27,12 @@ const getJsonOrThrowProblem = async (response) => {
             }
             throw body;
         } else {
-            const extension = new problemJson.Extension({
-                body: body
-            });
-            throw new problemJson.Document({
-                type: constants.problemBadGateway,
-                title: response.statusText,
-                status: response.status
-            }, extension);
+            throw problems.makeBadGatewayProblem(response, body);
         }
     } else {
         const bodyText = await response.text();
-        const extension = new problemJson.Extension({
-            body: bodyText
-        });
-        throw new problemJson.Document({
-            type: constants.problemBadGateway,
-            title: response.statusText,
-            status: response.status,
-        }, extension);
+        throw problems.makeBadGatewayProblem(response, bodyText);
     }
-};
-
-/**
- * Creates a problem-json Document representing a node-fetch FetchError
- * @param {object} fetchError a FetchError thrown from node-fetch
- * @returns {object} a problem-json Document representing that error
- */
-function wrapFetchError(fetchError) {
-    const errorType = fetchError.type;
-    const isTimeout = type == 'request-timeout' || type == 'body-timeout';
-
-    const problemType = isTimeout ? constants.problemGatewayTimeout : constants.problemBadGateway;
-    const title = isTimeout ? 'Gateway Timeout' : 'Bad Gateway';
-    const status = isTimeout ? 504 : 502;
-    const extension = new httpProblem.Extension({
-        fetchError: fetchError
-    });
-    throw new problemJson.Document({
-        type: type,
-        title: title,
-        status: status,
-        detail: fetchError.message
-    }, extension);
 };
 
 /**
@@ -107,7 +71,7 @@ const request = async (method, path, body) => {
         } else {
             console.log(e);
             if (e.name == 'FetchError') {
-                throw wrapFetchError(e);
+                throw problems.wrapFetchError(e);
             } else {
                 // This should not happen.
                 throw e;
@@ -142,11 +106,12 @@ module.exports.get = async (path) => {
 /**
  * Outputs an error throw from this module to an express response
  * @param {object} res an express response awaiting input
- * @param {object} error an error throw from this module
+ * @param {object} error an error thrown from this module
  */
 module.exports.sendError = function(res, error) {
     const problem = Number.isInteger(error.status)
         ? error
         : new problemJson.Document({status: 500});
-    res.status(problem.status).set('Content-Type', 'application/problem+json').send(problem).end();
+    problems.sendProblem(res, problem);
+    res.end();
 };

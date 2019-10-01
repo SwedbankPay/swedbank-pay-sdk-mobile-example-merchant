@@ -12,7 +12,15 @@ const problemGatewayTimeout = 'https://api.payex.com/psp/errordetail/mobilesdk/g
 // Problem type for bogus responses from backend
 const problemBadGateway = 'https://api.payex.com/psp/errordetail/mobilesdk/badgateway';
 
+// Problem type for requests with invalid credentials from client
+const problemUnauthorized = 'https://api.payex.com/psp/errordetail/mobilesdk/unauthorized';
+
+// Problem type for bogus requests from client
+const problemBadRequest = 'https://api.payex.com/psp/errordetail/mobilesdk/badrequest';
+
 module.exports.apiKeyHeaderName = apiKeyHeaderName;
 module.exports.accessTokenHeaderName = accessTokenHeaderName;
 module.exports.problemGatewayTimeout = problemGatewayTimeout;
 module.exports.problemBadGateway = problemBadGateway;
+module.exports.problemUnauthorized = problemUnauthorized;
+module.exports.problemBadRequest = problemBadRequest;
