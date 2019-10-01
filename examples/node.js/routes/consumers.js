@@ -1,7 +1,7 @@
 'use strict';
 
 const { Joi } = require('celebrate');
-const { post } = require('../util/networking.js');
+const { post, sendError } = require('../util/networking.js');
 
 /**
  * Request payload schema for /consumers
@@ -47,7 +47,8 @@ module.exports.route = (req, res) => {
             res.status(200).send(payload).end();
         })
         .catch(error => {
-            console.log(`Failed to call PSP consumers API: ${error}`);
-            res.status(500).end();
+            console.log('Failed to call PSP consumers API');
+            console.log(error);
+            sendError(res, error);
         });
 };
