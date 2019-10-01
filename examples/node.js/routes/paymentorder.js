@@ -1,6 +1,6 @@
 'use strict';
 
-const { get } = require('../util/networking.js');
+const { get, sendError } = require('../util/networking.js');
 
 /**
  * Retrieves a single payment order by its ID (in path param).
@@ -31,7 +31,8 @@ module.exports.route = (req, res) => {
             res.status(200).send(payload).end();
         })
         .catch(error => {
-            console.log(`Failed to call PSP payments API: ${error}`);
-            res.status(500).end();
+            console.log('Failed to call PSP payments API');
+            console.log(error);
+            sendError(res, error);
         });
 };

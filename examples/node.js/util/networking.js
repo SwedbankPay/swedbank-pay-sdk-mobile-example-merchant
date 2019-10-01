@@ -1,6 +1,75 @@
 'use strict';
 
+const constants = require('./constants.js');
+const contentTypeParser = require('content-type-parser');
 const fetch = require('node-fetch');
+const problemJson = require('problem-json');
+
+/**
+ * Attempts to read a json response.
+ * @param {object} response a node-fetch Response
+ * @returns {object} the json read from the response
+ * @throws {object} a problem-json Document if the response contained one, or the Content-Type was unexpected
+ */
+const getJsonOrThrowProblem = async (response) => {
+    const contentType = contentTypeParser(response.headers.get('Content-Type'));
+    const type = contentType.type;
+    const subtype = contentType.subtype;
+    const isJson = type == 'application' && (subtype == 'json' || subtype.endsWith('+json'));
+    if (isJson) {
+        const body = await response.json();
+        if (response.ok) {
+            return body;
+        } else if (subtype == 'problem+json' || subtype == 'json') {
+            if (!Number.isInteger(body.status)) {
+                body.status = response.status;
+            }
+            throw body;
+        } else {
+            const extension = new problemJson.Extension({
+                body: body
+            });
+            throw new problemJson.Document({
+                type: constants.problemBadGateway,
+                title: response.statusText,
+                status: response.status
+            }, extension);
+        }
+    } else {
+        const bodyText = await response.text();
+        const extension = new problemJson.Extension({
+            body: bodyText
+        });
+        throw new problemJson.Document({
+            type: constants.problemBadGateway,
+            title: response.statusText,
+            status: response.status,
+        }, extension);
+    }
+};
+
+/**
+ * Creates a problem-json Document representing a node-fetch FetchError
+ * @param {object} fetchError a FetchError thrown from node-fetch
+ * @returns {object} a problem-json Document representing that error
+ */
+function wrapFetchError(fetchError) {
+    const errorType = fetchError.type;
+    const isTimeout = type == 'request-timeout' || type == 'body-timeout';
+
+    const problemType = isTimeout ? constants.problemGatewayTimeout : constants.problemBadGateway;
+    const title = isTimeout ? 'Gateway Timeout' : 'Bad Gateway';
+    const status = isTimeout ? 504 : 502;
+    const extension = new httpProblem.Extension({
+        fetchError: fetchError
+    });
+    throw new problemJson.Document({
+        type: type,
+        title: title,
+        status: status,
+        detail: fetchError.message
+    }, extension);
+};
 
 /**
  * Performs a HTTP request.
@@ -29,19 +98,21 @@ const request = async (method, path, body) => {
         opts.body = JSON.stringify(body);
     }
 
-    const response = await fetch(url, opts);
-
-    if (response.ok) {
-        return await response.json();
-    } else {
-        console.log(`HTTP ${method} ${path} failed, code: ${response.status}`);
-        console.log(`Status text: ${response.statusText}`);
-
-        const bodyText = await response.text();
-        console.log(`Response body: ${bodyText}`);
-
-        throw Error(`HTTP ${method} ${path} failed with status code ` +
-            `${response.status}: ${response.statusText}`);
+    try {
+        const response = await fetch(url, opts);
+        return await getJsonOrThrowProblem(response);
+    } catch (e) {
+        if (Number.isInteger(e.status)) {
+            throw e;
+        } else {
+            console.log(e);
+            if (e.name == 'FetchError') {
+                throw wrapFetchError(e);
+            } else {
+                // This should not happen.
+                throw e;
+            }
+        }
     }
 };
 
@@ -66,4 +137,16 @@ module.exports.post = async (path, body) => {
  */
 module.exports.get = async (path) => {
     return await request('get', path);
+};
+
+/**
+ * Outputs an error throw from this module to an express response
+ * @param {object} res an express response awaiting input
+ * @param {object} error an error throw from this module
+ */
+module.exports.sendError = function(res, error) {
+    const problem = Number.isInteger(error.status)
+        ? error
+        : new problemJson.Document({status: 500});
+    res.status(problem.status).set('Content-Type', 'application/problem+json').send(problem).end();
 };
