@@ -2,7 +2,8 @@
 
 const express = require('express');
 const app = express();
-const { celebrate, errors } = require('celebrate');
+const { celebrate } = require('celebrate');
+const { celebrateProblems } = require('./util/problems.js');
 
 // Read our global configuration from disk
 global.config = require('./appconfig.json');
@@ -33,7 +34,7 @@ app.post('/paymentorders', celebrate({ body: paymentorders.schema }),
 app.get('/paymentorder/:id', paymentorder.route);
 
 // Handle the errors from Celebrate. Must be defined after the routes.
-app.use(errors());
+app.use(celebrateProblems);
 
 if (process.env.PAYEX_SERVER_BASE_URL) {
   console.log(`Overriding server address from environment: `
