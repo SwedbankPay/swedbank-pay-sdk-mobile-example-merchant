@@ -1,4 +1,4 @@
-package com.payex.samples.merchant.controllers;
+package com.swedbank.samples.merchant.controllers;
 
 import java.util.HashMap;
 

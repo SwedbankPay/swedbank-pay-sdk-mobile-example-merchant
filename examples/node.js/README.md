@@ -1,10 +1,10 @@
 # Sample Merchant Backend implementation, Node.js 
 
-This is a sample implementation of a PayEx merchant backend implemented in Node.js.
+This is a sample implementation of a Swedbank Pay merchant backend implemented in Node.js.
 
 The core technology stack used is npm, node.js 10, express.js.
 
-The application implemeents the [PayEx Mobile Backend API Reference](https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) and further calls the PayEx eCommerce platform APIs ('PSP') to perform the authentication and payment functions. The server code ships with the secrets required to talk to the PSP. It also presents a naive in-memory data storage solution for storing the merchant data.
+The application implemeents the [Swedbank Pay Mobile Backend API Reference](https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/Swedbank Paysdk_openapi.yaml) and further calls the Swedbank Pay eCommerce platform APIs ('PSP') to perform the authentication and payment functions. The server code ships with the secrets required to talk to the PSP. It also presents a naive in-memory data storage solution for storing the merchant data.
 
 ## Configuration file
 
@@ -14,8 +14,8 @@ The application needs to ship some secrets. It does this naively via `appconfig.
 
 The sample backend assumes the following HTTP headers to be present in all requests:
 
-* `x-payex-sample-apikey` - A fixed API key. The client applications must store this value securely and include it in all requests.
-* `x-payex-sample-access-token` - an access token identifying the current user / device. The client applications must store this value securely and include it in all requests.
+* `x-Swedbank Pay-sample-apikey` - A fixed API key. The client applications must store this value securely and include it in all requests.
+* `x-Swedbank Pay-sample-access-token` - an access token identifying the current user / device. The client applications must store this value securely and include it in all requests.
 
 ## Data format
 
@@ -54,13 +54,13 @@ This application has been packaged as a Docker container.
 Build the Docker image:
 
 ```
-docker build -t payex/merchant-sample-nodejs .
+docker build -t Swedbank Pay/merchant-sample-nodejs .
 ```
 
 Run the Docker image:
 
 ```
-docker run -p 8080:8080 -d payex/merchant-sample-nodejs
+docker run -p 8080:8080 -d Swedbank Pay/merchant-sample-nodejs
 ```
 
 Now the merchant API is running at `http://localhost:8080`.
@@ -78,13 +78,13 @@ Replace `<PROJECT-ID>` with your GCP project ID.
 Build your image using Cloud Build:
 
 ```
-gcloud builds submit --project=<PROJECT-ID> --tag gcr.io/<PROJECT-ID>/payex/merchant-sample-nodejs
+gcloud builds submit --project=<PROJECT-ID> --tag gcr.io/<PROJECT-ID>/Swedbank Pay/merchant-sample-nodejs
 ```
 
 Deploy to Cloud Run:
 
 ```
-gcloud beta run deploy --project=<PROJECT-ID> --image gcr.io/<PROJECT-ID>/payex/merchant-sample-nodejs --platform managed
+gcloud beta run deploy --project=<PROJECT-ID> --image gcr.io/<PROJECT-ID>/Swedbank Pay/merchant-sample-nodejs --platform managed
 ```
 
 See the output of this command to find out the public endpoint address.
@@ -103,5 +103,5 @@ Replace `<PROJECT-ID>` with your GCP project ID.
 
 ## References
 
-* [PayEx eCommerce platform API](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/)
+* [Swedbank Pay eCommerce platform API](https://developer.Swedbank Pay.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/)
 

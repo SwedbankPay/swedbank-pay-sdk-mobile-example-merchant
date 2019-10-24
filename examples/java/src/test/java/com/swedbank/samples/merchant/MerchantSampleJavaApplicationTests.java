@@ -1,4 +1,4 @@
-package com.payex.samples.merchant;
+package com.swedbank.samples.merchant;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

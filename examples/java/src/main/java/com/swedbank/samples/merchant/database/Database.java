@@ -1,9 +1,9 @@
-package com.payex.samples.merchant.database;
+package com.swedbank.samples.merchant.database;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.payex.samples.merchant.common.MerchantData;
+import com.swedbank.samples.merchant.common.MerchantData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

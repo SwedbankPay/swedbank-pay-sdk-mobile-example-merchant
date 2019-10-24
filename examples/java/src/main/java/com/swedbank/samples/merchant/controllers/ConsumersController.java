@@ -1,11 +1,11 @@
-package com.payex.samples.merchant.controllers;
+package com.swedbank.samples.merchant.controllers;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
-import com.payex.samples.merchant.common.Operation;
-import com.payex.samples.merchant.networking.RestClient;
+import com.swedbank.samples.merchant.common.Operation;
+import com.swedbank.samples.merchant.networking.RestClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

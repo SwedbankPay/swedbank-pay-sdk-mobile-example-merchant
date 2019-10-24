@@ -1,6 +1,6 @@
-package com.payex.samples.merchant.networking;
+package com.swedbank.samples.merchant.networking;
 
-import static com.payex.samples.merchant.Constants.ENV_VAR_SERVER_BASEURL;
+import static com.swedbank.samples.merchant.Constants.ENV_VAR_SERVER_BASEURL;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -35,7 +35,7 @@ public class RestClient {
     /**
      * Returns the server address; either the default valuen from 
      * the configuration file or the value specified by environment variable 
-     * PAYEX_SERVER_BASE_URL if defined.
+     * SWEDBANKPAY_SERVER_BASE_URL if defined.
      * 
      * @return server base url (eg. https://example.com)
      */

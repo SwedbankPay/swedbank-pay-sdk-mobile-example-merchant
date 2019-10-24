@@ -4,7 +4,7 @@ plugins {
 	id 'java'
 }
 
-group = 'com.payex.samples.merchant'
+group = 'com.swedbank.samples.merchant'
 version = '1.0.0'
 sourceCompatibility = '1.8'
 

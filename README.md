@@ -1,6 +1,6 @@
-# PayEx Mobile SDK Merchant Backend Guide
+# Swedbank Pay Mobile SDK Merchant Backend Guide
 
-This repository holds information about how to implement a Merchant Backend application to act as an endpoint between a merchant's mobile application and the PayEx APIs. 
+This repository holds information about how to implement a Merchant Backend application to act as an endpoint between a merchant's mobile application and the Swedbank Pay APIs. 
 
 It features a step by step guide on what the merchant backend MUST do and also offers insights on what the merchant backend SHOULD do to complete its function in an efficient and secure manner.
 
@@ -10,8 +10,8 @@ Implementation examples in some popular programming languages are included.
 
 This document uses the following terminology:
 
-* *SDK* - refers to the PayEx mobile SDK
-* *PSP* - refers to PayEx eCommerce platform
+* *SDK* - refers to the Swedbank Pay mobile SDK
+* *PSP* - refers to Swedbank Pay eCommerce platform
 * *Merchant* - refers to the party using the mobile payments SDK (and implementing the corresponding merchant backend)
 
 ## Implementation Guide
@@ -20,9 +20,9 @@ This chapter addresses the things to consider when implementing a merchant backe
 
 ### Mobile API 
 
-First of all you need to implement the PayEx Mobile Backend REST API. Pick a suitable technology stack for your programming language of choice.
+First of all you need to implement the Swedbank Pay Mobile Backend REST API. Pick a suitable technology stack for your programming language of choice.
 
-See the [PayEx Mobile Backend API Reference](https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) for more info.
+See the [Swedbank Pay Mobile Backend API Reference](https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/Swedbank Paysdk_openapi.yaml) for more info.
 
 #### Authentication
 
@@ -38,13 +38,13 @@ The `POST /paymentorders` API call takes a parameter called `merchantData`. This
 
 Your merchant backend will likely want to have an intermediate data storage for storing purchases. Typically you would write the received purchase into a data storage and then make a call to the PSP APIs. And then the PSP responds, you would update the purchase data by adding the status (success/fail) of the action as well as noting the ID of a successful purchase.
 
-### Integrating to PayEx eCommerce API
+### Integrating to Swedbank Pay eCommerce API
 
-Your merchant backend will need to integrate to the PayEx eCommerce API. For this purpose you will need a *Merchant ID* as well as a *Merchant Token* which you will receive from PayEx. 
+Your merchant backend will need to integrate to the Swedbank Pay eCommerce API. For this purpose you will need a *Merchant ID* as well as a *Merchant Token* which you will receive from Swedbank Pay. 
 
 These API calls are not instantaneous; consider this for performance purposes of your backend. Implement the HTTP requests using the best practices of your programming language / platform.
 
-See the [Technical Reference](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/) for more info.
+See the [Technical Reference](https://developer.Swedbank Pay.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/) for more info.
 
 ### Information Security 
 
@@ -56,8 +56,8 @@ Implement your API in a secure manner over an encrypted TLS connection. The mobi
 
 Here are listed the essential resources needed for the implementation work:
 
-* [PayEx Mobile Backend API Reference](https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) 
-* [PayEx eCommerce API Technical Reference](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/)
+* [Swedbank Pay Mobile Backend API Reference](https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/Swedbank Paysdk_openapi.yaml) 
+* [Swedbank Pay eCommerce API Technical Reference](https://developer.Swedbank Pay.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/)
 
 ## Examples
 

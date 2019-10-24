@@ -45,7 +45,7 @@ const getJsonOrThrowProblem = async (response) => {
  * server response as a parsed object representing the JSON response content.
  */
 const request = async (method, path, body) => {
-    const baseUrl = process.env.PAYEX_SERVER_BASE_URL ||
+    const baseUrl = process.env.SWEDBANKPAY_SERVER_BASE_URL ||
         global.config.payexBaseUrl;
     const url = `${baseUrl}${path}`;
     const opts = {
@@ -108,10 +108,10 @@ module.exports.get = async (path) => {
  * @param {object} res an express response awaiting input
  * @param {object} error an error thrown from this module
  */
-module.exports.sendError = function(res, error) {
+module.exports.sendError = function (res, error) {
     const problem = Number.isInteger(error.status)
         ? error
-        : new problemJson.Document({status: 500});
+        : new problemJson.Document({ status: 500 });
     problems.sendProblem(res, problem);
     res.end();
 };

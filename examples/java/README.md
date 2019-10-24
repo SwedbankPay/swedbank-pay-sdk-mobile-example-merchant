@@ -1,10 +1,10 @@
 # Sample Merchant Backend implementation, Java
 
-This is a sample implementation of a PayEx merchant backend implemented in Java.
+This is a sample implementation of a Swedbank Pay merchant backend implemented in Java.
 
 The core technology stack used is Java8, Gradle, Spring Boot.
 
-The application implemeents the [PayEx Mobile Backend API Reference](https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/payexsdk_openapi.yaml) and further calls the PayEx eCommerce platform APIs ('PSP') to perform the authentication and payment functions. The server code ships with the secrets required to talk to the PSP. It also presents a naive in-memory data storage solution for storing the merchant data.
+The application implemeents the [Swedbank Pay Mobile Backend API Reference](https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/Swedbank Paysdk_openapi.yaml) and further calls the Swedbank Pay eCommerce platform APIs ('PSP') to perform the authentication and payment functions. The server code ships with the secrets required to talk to the PSP. It also presents a naive in-memory data storage solution for storing the merchant data.
 
 ## Configuration file
 
@@ -14,8 +14,8 @@ The application needs to ship some secrets. It does this naively via `src/main/r
 
 The sample backend assumes the following HTTP headers to be present in all requests:
 
-* `x-payex-sample-apikey` - A fixed API key. The client applications must store this value securely and include it in all requests.
-* `x-payex-sample-access-token` - an access token identifying the current user / device. The client applications must store this value securely and include it in all requests.
+* `x-Swedbank Pay-sample-apikey` - A fixed API key. The client applications must store this value securely and include it in all requests.
+* `x-Swedbank Pay-sample-access-token` - an access token identifying the current user / device. The client applications must store this value securely and include it in all requests.
 
 ## Data format
 
@@ -68,13 +68,13 @@ Build the application into a .jar:
 Build the Docker image:
 
 ```sh
-docker build --build-arg jarfile=build/libs/merchant-sample-java-1.0.0.jar -t payex/merchant-sample-java .
+docker build --build-arg jarfile=build/libs/merchant-sample-java-1.0.0.jar -t Swedbank Pay/merchant-sample-java .
 ```
 
 Run the Docker image:
 
 ```sh
-docker run -p 8080:8080 -d payex/merchant-sample-java
+docker run -p 8080:8080 -d Swedbank Pay/merchant-sample-java
 ```
 
 Now the merchant API is running at `http://localhost:8080`.
@@ -92,17 +92,17 @@ Replace `<PROJECT-ID>` with your GCP project ID.
 Build your image using Cloud Build:
 
 ```
-gcloud builds submit --project=<PROJECT-ID> --tag gcr.io/<PROJECT-ID>/payex/merchant-sample-java
+gcloud builds submit --project=<PROJECT-ID> --tag gcr.io/<PROJECT-ID>/Swedbank Pay/merchant-sample-java
 ```
 
 Deploy to Cloud Run:
 
 ```
-gcloud beta run deploy --project=<PROJECT-ID> --image gcr.io/<PROJECT-ID>/payex/merchant-sample-java --platform managed
+gcloud beta run deploy --project=<PROJECT-ID> --image gcr.io/<PROJECT-ID>/Swedbank Pay/merchant-sample-java --platform managed
 ```
 
 See the output of this command to find out the public endpoint address.
 
 ## References
 
-* [PayEx eCommerce platform API](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/)
+* [Swedbank Pay eCommerce platform API](https://developer.Swedbank Pay.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/)

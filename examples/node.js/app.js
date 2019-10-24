@@ -36,9 +36,9 @@ app.get('/paymentorder/:id', paymentorder.route);
 // Handle the errors from Celebrate. Must be defined after the routes.
 app.use(celebrateProblems);
 
-if (process.env.PAYEX_SERVER_BASE_URL) {
+if (process.env.SWEDBANKPAY_SERVER_BASE_URL) {
   console.log(`Overriding server address from environment: `
-    + `${process.env.PAYEX_SERVER_BASE_URL}`);
+    + `${process.env.SWEDBANKPAY_SERVER_BASE_URL}`);
 }
 
 // Start the server

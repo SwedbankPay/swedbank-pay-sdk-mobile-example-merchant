@@ -1,6 +1,6 @@
-package com.payex.samples.merchant;
+package com.swedbank.samples.merchant;
 
-import static com.payex.samples.merchant.Constants.ENV_VAR_SERVER_BASEURL;
+import static com.swedbank.samples.merchant.Constants.ENV_VAR_SERVER_BASEURL;
 
 import java.util.Collections;
 

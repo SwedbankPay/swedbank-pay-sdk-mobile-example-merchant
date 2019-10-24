@@ -1,4 +1,4 @@
-package com.payex.samples.merchant.common;
+package com.swedbank.samples.merchant.common;
 
 import java.util.List;
 

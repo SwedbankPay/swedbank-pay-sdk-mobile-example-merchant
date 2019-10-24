@@ -1,11 +1,11 @@
-package com.payex.samples.merchant.controllers;
+package com.swedbank.samples.merchant.controllers;
 
 import com.google.gson.Gson;
-import com.payex.samples.merchant.common.MerchantData;
-import com.payex.samples.merchant.common.PaymentOrderResponse;
-import com.payex.samples.merchant.database.Database;
-import com.payex.samples.merchant.exceptions.NotFoundException;
-import com.payex.samples.merchant.networking.RestClient;
+import com.swedbank.samples.merchant.common.MerchantData;
+import com.swedbank.samples.merchant.common.PaymentOrderResponse;
+import com.swedbank.samples.merchant.database.Database;
+import com.swedbank.samples.merchant.exceptions.NotFoundException;
+import com.swedbank.samples.merchant.networking.RestClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

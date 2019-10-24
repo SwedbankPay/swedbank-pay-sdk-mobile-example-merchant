@@ -1,11 +1,11 @@
 {
-  "name": "payex-merchant-nodejs-sample",
+  "name": "swedbankpay-merchant-nodejs-sample",
   "version": "0.0.1",
-  "description": "Example PayEx Merchant Backend implementation in Node.js.",
+  "description": "Example Swedbank Pay Merchant Backend implementation in Node.js.",
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git@git.qvik.fi:payex/merchant-backend-sample-nodejs.git"
+    "url": "git@github.com:SwedbankPay/swedbank-pay-sdk-mobile-example-merchant.git"
   },
   "dependencies": {
     "celebrate": "^10.0.1",
@@ -22,8 +22,8 @@
   },
   "keywords": [
     "node",
-    "payex"
+    "Swedbank Pay"
   ],
-  "author": "PayEx",
+  "author": "Swedbank Pay",
   "license": "MIT"
 }

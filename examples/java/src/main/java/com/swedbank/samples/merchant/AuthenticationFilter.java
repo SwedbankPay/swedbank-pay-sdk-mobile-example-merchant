@@ -1,8 +1,8 @@
-package com.payex.samples.merchant;
+package com.swedbank.samples.merchant;
 
-import static com.payex.samples.merchant.Constants.ACCESS_TOKEN_HEADER;
-import static com.payex.samples.merchant.Constants.API_KEY_HEADER;
-import static com.payex.samples.merchant.Constants.USER_ID_ATTRIBUTE;
+import static com.swedbank.samples.merchant.Constants.ACCESS_TOKEN_HEADER;
+import static com.swedbank.samples.merchant.Constants.API_KEY_HEADER;
+import static com.swedbank.samples.merchant.Constants.USER_ID_ATTRIBUTE;
 
 import java.io.IOException;
 

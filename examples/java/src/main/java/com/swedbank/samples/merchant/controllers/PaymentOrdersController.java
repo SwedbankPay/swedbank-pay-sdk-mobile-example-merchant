@@ -1,4 +1,4 @@
-package com.payex.samples.merchant.controllers;
+package com.swedbank.samples.merchant.controllers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,15 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
-import com.payex.samples.merchant.common.MerchantData;
-import com.payex.samples.merchant.common.Operation;
-import com.payex.samples.merchant.common.PaymentOrder;
-import com.payex.samples.merchant.common.PaymentOrderPayeeInfo;
-import com.payex.samples.merchant.common.PaymentOrderPayer;
-import com.payex.samples.merchant.common.PaymentOrderUrls;
-import com.payex.samples.merchant.database.Database;
-import com.payex.samples.merchant.common.PaymentOrderResponse;
-import com.payex.samples.merchant.networking.RestClient;
+import com.swedbank.samples.merchant.common.MerchantData;
+import com.swedbank.samples.merchant.common.Operation;
+import com.swedbank.samples.merchant.common.PaymentOrder;
+import com.swedbank.samples.merchant.common.PaymentOrderPayeeInfo;
+import com.swedbank.samples.merchant.common.PaymentOrderPayer;
+import com.swedbank.samples.merchant.common.PaymentOrderUrls;
+import com.swedbank.samples.merchant.database.Database;
+import com.swedbank.samples.merchant.common.PaymentOrderResponse;
+import com.swedbank.samples.merchant.networking.RestClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
