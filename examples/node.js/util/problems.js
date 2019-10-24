@@ -50,12 +50,13 @@ function celebrateProblems(err, req, res, next) {
  */
 function makeBadGatewayProblem(response, body) {
     const extension = new problemJson.Extension({
+        gatewayStatus: response.status,
         body: body
     });
     return new problemJson.Document({
         type: constants.problemBadGateway,
-        title: response.statusText,
-        status: response.status
+        title: 'Bad Gateway',
+        status: 502
     }, extension);
 }
 
