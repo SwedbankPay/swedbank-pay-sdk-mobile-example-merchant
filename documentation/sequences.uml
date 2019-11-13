@@ -1,0 +1,89 @@
+@startuml
+actor "Mobile App" as App
+participant "Mobile SDK" as SDK
+participant "Merchant Backend" as Merx
+participant "Swedbank Pay Backend" as Swed
+
+group once
+  App -> SDK : Configure merchant backend URL and custom headers
+end
+
+App -> App : Prepare merchant specific payment data
+
+alt Identified Payment
+  App -> App : Get customer's country; also e-mail and phone if applicable
+  App -> SDK : Initialize payment component with customer info and merchant specific data
+  App -> App : Show payment component
+
+  group cacheable
+    SDK -> Merx : GET {entrypoint}
+    SDK <- Merx : consumers, paymentorders
+  end
+
+  SDK -> Merx : POST {consumers}, consumerCountryCode, etc.
+  Merx -> Swed : POST /psp/consumers, consumerCountryCode, etc.
+  Merx <- Swed : token, operations
+  SDK <- Merx : operations
+
+  SDK -> SDK : Compose web page with embedded view-consumer-identification link, and show it in a web view
+  SDK -> SDK : onConsumerIdentified
+
+  opt Store Consumer Reference
+    App <- SDK : consumerProfileRef
+    App -> App : Store consumerProfileRef for future payments
+  end
+end
+
+alt Stored Consumer Reference
+  App -> SDK : Initialize payment component with stored consumerProfileRef and merchant specific data
+  App -> App : Show payment component
+end
+
+alt Anonymous Payment
+  App -> SDK : Initialize payment component with merchant specific data
+  App -> App : Show payment component
+end
+
+group Payment
+
+  group cacheable
+    SDK -> Merx : GET {entrypoint}
+    SDK <- Merx : consumers, paymentorders
+  end
+
+  SDK -> Merx : POST {paymentorders}, consumerProfileRef, merchantData
+  Merx -> Merx : Parse merchantData to prepare paymentorder, add consumerProfileRef if given
+  Merx -> Swed : POST /psp/paymentorders, paymentorder
+  Merx <- Swed : paymentorder, operations
+  Merx -> Merx : Store the Swedbank URL referring to the payment order\nCreate a Merchant Backend URL to refer to this payment order
+  SDK <- Merx: url (the Merchant Backend one), operations
+  SDK -> SDK : Compose web page with embedded view-paymentorder link, and show it in a web view
+
+  alt Success
+    SDK -> SDK : onPaymentCompleted
+    App <- SDK : Payment state: Success
+  end
+  alt Failure
+    SDK -> SDK : onPaymentFailed
+    App <- SDK : Payment state: Failure
+    App -> SDK : Get failure reason
+    SDK -> Merx : GET {url}
+    Merx -> Merx : Retrieve stored the Swedbank URL
+    Merx -> Swed : GET {paymentorder.id}
+    Merx <- Swed : paymentorder, operations
+    group Retrieve Failure Reason
+      note over Merx : N.B. The example does not implement this part at the time of writing
+      Merx -> Swed : GET {paymentorder.currentPayment}
+      Merx <- Swed : payment
+      Merx -> Swed : GET {payment.transactions.id}
+      Merx <- Swed : transactions
+      Merx -> Merx : Find failedReason from transactions
+    end
+    SDK <- Merx : url, state, failureReason, operations
+    App <- SDK : failureReason
+  end
+  App -> App : Remove payment component from view\nDisplay payment result
+
+end
+
+@enduml
