@@ -8,6 +8,7 @@ const { post, sendError } = require('../util/networking.js');
  */
 module.exports.schema = Joi.object().keys({
     consumerProfileRef: Joi.string(),
+    callbackScheme: Joi.string(),
     merchantData: Joi.object().required(),
 });
 
@@ -63,6 +64,15 @@ const createPaymentOrder = (req) => {
 
     const baseUrl = `https://${req.headers["host"]}`;
 
+    const urls = {
+        hostUrls: [baseUrl],
+        completeUrl: `${baseUrl}/complete`,
+        cancelUrl: `${baseUrl}/cancel`
+    };
+    if (req.body.callbackScheme) {
+        urls.paymentUrl = `${req.body.callbackScheme}://reload/`;
+    }
+
     const paymentOrder = {
         operation: 'Purchase',
         currency: merchantData.currency,
@@ -73,11 +83,7 @@ const createPaymentOrder = (req) => {
         language: merchantData.languageCode,
         generateRecurrenceToken: false,
         disablePaymentMenu: false,
-        urls: {
-            hostUrls: [baseUrl],
-            completeUrl: `${baseUrl}/complete`,
-            cancelUrl: `${baseUrl}/cancel`
-        },
+        urls: urls,
         payeeInfo: {
             payeeId: global.config.merchantId,
             payeeReference: paymentId
