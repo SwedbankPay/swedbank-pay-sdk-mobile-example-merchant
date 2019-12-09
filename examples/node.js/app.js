@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const { celebrate } = require('celebrate');
 const { celebrateProblems } = require('./util/problems.js');
+const { appleAppSiteAssociationPath } = require('./util/constants.js');
 
 // Read our global configuration from disk
 global.config = require('./appconfig.json');
@@ -24,6 +25,7 @@ const index = require('./routes/index.js');
 const consumers = require('./routes/consumers.js');
 const paymentorders = require('./routes/paymentorders.js');
 const paymentorder = require('./routes/paymentorder.js');
+const appleAssoc = require('./routes/apple-app-site-association.js');
 
 // Specify our routes
 app.get('/', index.route);
@@ -32,6 +34,8 @@ app.post('/consumers', celebrate({ body: consumers.schema }),
 app.post('/paymentorders', celebrate({ body: paymentorders.schema }),
   paymentorders.route);
 app.get('/paymentorder/:id', paymentorder.route);
+app.get(appleAppSiteAssociationPath, appleAssoc.route);
+// N.B! /sdk-callback/* is reserved and handled by the SDK.
 
 // Handle the errors from Celebrate. Must be defined after the routes.
 app.use(celebrateProblems);

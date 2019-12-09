@@ -4,14 +4,20 @@ const constants = require('./util/constants.js');
 const problems = require('./util/problems.js');
 
 /**
- * Authentication middleware. Checks the presence and correctness of 
+ * Authentication middleware. Checks the presence and correctness of
  * our API key.
- * 
+ *
  * @param {object} req our Express request object
  * @param {object} res our Express response object
  * @param {object} next our next Express route handler
  */
 const auth = (req, res, next) => {
+    if (req.path == constants.appleAppSiteAssociationPath) {
+        console.log('Skipping authentication middleware for public metadata.');
+        next();
+        return;
+    }
+
     console.log('Running authentication middleware.');
 
     const apiKey = req.headers[constants.apiKeyHeaderName];
@@ -32,7 +38,7 @@ const auth = (req, res, next) => {
         return;
     }
 
-    // Expect an arbitrary minimum length for the authentication token; 
+    // Expect an arbitrary minimum length for the authentication token;
     // this can be used for generating a different kind of 401 error for testing
     if (accessToken.length < 5) {
         problems.sendProblem(res, problems.makeUnauthorizedProblem('access token too short'));

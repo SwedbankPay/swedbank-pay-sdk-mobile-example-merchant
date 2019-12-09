@@ -9,6 +9,7 @@ const { post, sendError } = require('../util/networking.js');
 module.exports.schema = Joi.object().keys({
     consumerProfileRef: Joi.string(),
     callbackScheme: Joi.string(),
+    callbackPrefix: Joi.string(),
     merchantData: Joi.object().required(),
 });
 
@@ -41,8 +42,23 @@ const merchantDataSchema = Joi.object().keys({
     }))
 });
 
+function getCallbackPrefix(req) {
+    const url = req.body.callbackPrefix;
+    if (url) {
+      return url.endsWith('/') ? url : url + '/';
+    } else if (req.body.callbackScheme) {
+      return `${req.body.callbackScheme}://`;
+    } else {
+      return null;
+    }
+}
+
+function getPaymentUrl(paymentId) {
+    return `/paymentorder/${paymentId}`;
+}
+
 /**
- * Creates a Payment Order based on the merchant configuration, purchase data 
+ * Creates a Payment Order based on the merchant configuration, purchase data
  * and the incoming Request object.
  *
  * @param {object} req our Express request object
@@ -69,8 +85,10 @@ const createPaymentOrder = (req) => {
         completeUrl: `${baseUrl}/complete`,
         cancelUrl: `${baseUrl}/cancel`
     };
-    if (req.body.callbackScheme) {
-        urls.paymentUrl = `${req.body.callbackScheme}://reload/`;
+    const callbackPrefix = getCallbackPrefix(req);
+    if (callbackPrefix) {
+        const encodedUrl = encodeURIComponent(getPaymentUrl(paymentId));
+        urls.paymentUrl = `${callbackPrefix}reload?url=${encodedUrl}`;
     }
 
     const paymentOrder = {
@@ -101,9 +119,9 @@ const createPaymentOrder = (req) => {
 
 /**
  * Calls the PSP endpoint to create a new Payment Order.
- * 
+ *
  * The following format is used for our 'merchant data':
- * 
+ *
  * {
  *   "basketId": "123",
  *   "currency": "SEK",
@@ -153,7 +171,7 @@ module.exports.route = (req, res) => {
                 pspResponse.paymentOrder.id);
 
             const payload = {
-                url: `/paymentorder/${paymentOrder.payeeInfo.payeeReference}`,
+                url: getPaymentUrl(paymentOrder.payeeInfo.payeeReference),
                 state: pspResponse.paymentOrder.state,
                 operations: pspResponse.operations
             };
@@ -165,4 +183,4 @@ module.exports.route = (req, res) => {
             console.log(error);
             sendError(res, error);
         });
-}; 
+};
