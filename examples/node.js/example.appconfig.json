@@ -4,5 +4,8 @@
   "merchantId": "<your-merchant-id-from-swedbank>",
   "countryCode": "SE",
   "currency": "SEK",
-  "payexBaseUrl": "https://api.externalintegration.payex.com"
+  "payexBaseUrl": "https://api.externalintegration.payex.com",
+  "iosAppIds": [
+    "<your-team-id>.<your-app-id>"
+  ]
 }

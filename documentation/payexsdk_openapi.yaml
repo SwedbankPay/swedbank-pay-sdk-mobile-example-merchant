@@ -1,7 +1,7 @@
 openapi: '3.0.2'
 info:
   title: PayEx Mobile Backend
-  version: '1.0-beta01'
+  version: '1.0-beta02'
 components:
   schemas:
     TopLevelResources:
@@ -66,7 +66,7 @@ components:
         - operations
       properties:
         operations:
-          description: The `operations` array from the [PayEx API](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/consumers-resource#HInitiateConsumerSession)
+          description: The `operations` array from the [Swedbank Pay API](https://developer.swedbankpay.com/checkout/checkin#checkin-back-end)
           type: array
           items: 
             type: object
@@ -81,6 +81,9 @@ components:
       properties:
         consumerProfileRef:
           description: The payer's consumer profile reference. Omitted for anonymous payment.
+          type: string
+        callbackPrefix:
+          description: The prefix to use for callbacks to the app.
           type: string
         merchantData:
           description: the merchantData originally passed to the Mobile SDK
@@ -116,7 +119,7 @@ components:
         state:
           description: >
             The state of the payment order as returned by the
-            [PayEx API](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/payment-orders-resource/#HPaymentOrders).
+            [Swedbank Pay API](https://developer.swedbankpay.com/checkout/other-features#payment-orders).
             Please refer to that documentation for possible values.
 
 
@@ -125,7 +128,7 @@ components:
         failureReason:
           description: >
             If `state` is `Failed`, this property shall contain the failure reason as returned by the
-            [PayEx API](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/core-payment-resources/#HTransaction).
+            [Swedbank Pay API](https://developer.swedbankpay.com/checkout/other-features#transactions).
 
 
             A payment order does not have a failure reason; rather the transactions contained
@@ -137,7 +140,7 @@ components:
           type: string
         operations:
           description: >
-            The `operations` array from the [PayEx API](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/payment-orders-resource#HOperations).
+            The `operations` array from the [Swedbank Pay API](https://developer.swedbankpay.com/checkout/other-features#operations).
           type: array
           items:
             type: object
@@ -225,7 +228,7 @@ paths:
         This operation shall start a consumer identification session using the arguments parsed
         from the request body. It returns an array of operations that can be used to complete the
         identification session as described
-        [here](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/consumers-resource/#HInitiateConsumerSession).
+        [here](https://developer.swedbankpay.com/checkout/checkin#checkin-front-end).
 
 
         The default implementation does some lightweight validation on the input values,
@@ -245,7 +248,7 @@ paths:
           description: >
             Identification successfully started. It will continue by embedding the returned
             `view-consumer-identification` link in html as specified
-            [here](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/consumers-resource/#HViewConsumerIdentification).
+            [here](https://developer.swedbankpay.com/checkout/checkin#checkin-front-end).
           content:
             application/json:
               schema:
@@ -262,13 +265,14 @@ paths:
       operationId: POST paymentorders
       summary: Creates a new payment order
       description: >
-        This operation shall create a new payment order. It returns an array of operations
-        that can be used to complete or abort the payment order as described
-        [here](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/payment-orders-resource#HOperations).
+        This operation shall create a new payment order. The new payment order shall be referenceable
+        by a url returned by this call. The result also contains an array of operations
+        that can be used to complete the payment order as described
+        [here](https://developer.swedbankpay.com/checkout/payment-menu#payment-menu-front-end).
 
 
         Payment orders are created by calling the `POST /psp/paymentorders` 
-        [PayEx API](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/payment-orders-resource/#HCreatingapaymentorder).
+        [Swedbank Pay API](https://developer.swedbankpay.com/checkout/payment-menu#request).
         The default implementation will take care of executing the https request, but you must
         provide custom business logic that creates the `paymentorder` object for the request.
         For this you should examine the `merchantData` value, which is the JSON representation
@@ -278,6 +282,13 @@ paths:
         The Mobile SDK embeds one of the returned links in a html template and renders the result using
         the backend URL as the page URL for same-origin-policy purposes. It is therefore
         required that `hostUrls` contain the backend URL. It should not contain other values.
+
+
+        The `paymentUrl` to Swedbank Pay must be set according to the `callbackPrefix` parameter.
+        `paymentUrl` shall have the following format: `<callbackPrefix>/reload?url=<escapedUrl>`, where `<escapedUrl>`
+        is a percent-encoding of the payment order url returned by this call. If `callbackPrefix` ends with a slash, do not add
+        an extra slash after it. (Note: This specification will be updated to require `completeUrl` and `cancelUrl`
+        to be formed analogously when Swedbank Pay backend supports arbitrary schemes for them.)
       requestBody:
         required: true
         content:
@@ -289,7 +300,7 @@ paths:
           description: >
             Payment order successfully created. It will continue by embedding the returned
             `view-paymentorder` link in html as specified
-            [here](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/payment-orders-resource/#HViewPaymentOrder).
+            [here](https://developer.swedbankpay.com/checkout/other-features#view-payment-order).
           content:
             application/json:
               schema:
