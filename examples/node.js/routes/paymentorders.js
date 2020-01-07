@@ -45,11 +45,11 @@ const merchantDataSchema = Joi.object().keys({
 function getCallbackPrefix(req) {
     const url = req.body.callbackPrefix;
     if (url) {
-      return url.endsWith('/') ? url : url + '/';
+        return url.endsWith('/') ? url : url + '/';
     } else if (req.body.callbackScheme) {
-      return `${req.body.callbackScheme}://`;
+        return `${req.body.callbackScheme}://`;
     } else {
-      return null;
+        return null;
     }
 }
 
@@ -94,8 +94,9 @@ const createPaymentOrder = (req) => {
     const paymentOrder = {
         operation: 'Purchase',
         currency: merchantData.currency,
-        amount: totalPrice,
-        vatAmount: totalVat,
+        // Force amount to 1 for safeguarding against errors in prod testing
+        amount: 100,
+        vatAmount: 25,
         description: merchantData.basketId,
         userAgent: req.headers["user-agent"],
         language: merchantData.languageCode,
