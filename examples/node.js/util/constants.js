@@ -18,7 +18,11 @@ const problemUnauthorized = 'https://api.payex.com/psp/errordetail/mobilesdk/una
 // Problem type for bogus requests from client
 const problemBadRequest = 'https://api.payex.com/psp/errordetail/mobilesdk/badrequest';
 
-const appleAppSiteAssociationPath = "/.well-known/apple-app-site-association";
+const appleAppSiteAssociationPath = '/.well-known/apple-app-site-association';
+
+const assetLinksPath = '/.well-known/assetlinks.json';
+
+const sdkCallbackReloadPath = '/sdk-callback/reload';
 
 module.exports.apiKeyHeaderName = apiKeyHeaderName;
 module.exports.accessTokenHeaderName = accessTokenHeaderName;
@@ -27,3 +31,5 @@ module.exports.problemBadGateway = problemBadGateway;
 module.exports.problemUnauthorized = problemUnauthorized;
 module.exports.problemBadRequest = problemBadRequest;
 module.exports.appleAppSiteAssociationPath = appleAppSiteAssociationPath;
+module.exports.assetLinksPath = assetLinksPath;
+module.exports.sdkCallbackReloadPath = sdkCallbackReloadPath;
