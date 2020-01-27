@@ -85,10 +85,18 @@ const createPaymentOrder = (req) => {
         completeUrl: `${baseUrl}/complete`,
         cancelUrl: `${baseUrl}/cancel`
     };
-    const callbackPrefix = getCallbackPrefix(req);
-    if (callbackPrefix) {
-        const encodedUrl = encodeURIComponent(getPaymentUrl(paymentId));
-        urls.paymentUrl = `${callbackPrefix}reload?url=${encodedUrl}`;
+
+    const callbackScheme = req.body.callbackScheme;
+    if (callbackScheme) {
+        const prefix = req.body.callbackPrefix;
+        if (prefix) {
+            const prefixWithSlash = prefix.endsWith('/') ? prefix : prefix + '/';
+            const encodedUrl = encodeURIComponent(getPaymentUrl(paymentId));
+            const encodedScheme = encodeURIComponent(callbackScheme);
+            urls.paymentUrl = `${prefixWithSlash}reload?token=${encodedUrl}&scheme=${encodedScheme}`;
+        } else {
+            urls.paymentUrl = `${callbackScheme}:///reload?token=${encodedUrl}`;
+        }
     }
 
     const paymentOrder = {

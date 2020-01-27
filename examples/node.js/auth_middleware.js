@@ -12,8 +12,14 @@ const problems = require('./util/problems.js');
  * @param {object} next our next Express route handler
  */
 const auth = (req, res, next) => {
-    if (req.path == constants.appleAppSiteAssociationPath) {
+    if (req.path == constants.appleAppSiteAssociationPath
+       || req.path == constants.assetLinksPath) {
         console.log('Skipping authentication middleware for public metadata.');
+        next();
+        return;
+    }
+    if (req.path == constants.sdkCallbackReloadPath) {
+        console.log('Skipping authentication middleware for callback page.');
         next();
         return;
     }
