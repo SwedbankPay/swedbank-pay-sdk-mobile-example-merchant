@@ -142,7 +142,7 @@ const paymentOrderSchema = Joi.object().keys({
  */
 
 module.exports.schema = Joi.object().keys({
-    paymentorder: paymentOrderSchema//.required()
+    paymentorder: paymentOrderSchema.required()
 });
 
 
