@@ -141,7 +141,7 @@ const paymentOrderSchema = Joi.object().keys({
  * Payload scheme for /paymentorders.
  */
 module.exports.schema = Joi.object().keys({
-    paymentorder: paymentOrderSchema//.required()
+    paymentorder: paymentOrderSchema.required()
 });
 
 
