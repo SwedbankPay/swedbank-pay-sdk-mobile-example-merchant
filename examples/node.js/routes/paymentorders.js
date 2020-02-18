@@ -4,188 +4,209 @@ const { Joi } = require('celebrate');
 const { post, sendError } = require('../util/networking.js');
 
 /**
- * Payload scheme for /paymentorders.
+ * Validation schema for paymentorder.
  */
-module.exports.schema = Joi.object().keys({
-    consumerProfileRef: Joi.string(),
-    callbackScheme: Joi.string(),
-    callbackPrefix: Joi.string(),
-    merchantData: Joi.object().required(),
-});
-
-/**
- * Validation schema for our merchant data format.
- */
-const merchantDataSchema = Joi.object().keys({
-    basketId: Joi.string()
+const paymentOrderSchema = Joi.object().keys({
+    operation: Joi.string()
+        .valid('Purchase', 'Verify')
         .required(),
     currency: Joi.string()
-        .min(3)
-        .max(3)
         .required(),
-    languageCode: Joi.string()
-        .min(2)
-        .max(6)
+    amount: Joi.number()
+        .integer()
         .required(),
-    items: Joi.array().items(Joi.object({
-        itemId: Joi.string()
+    vatAmount: Joi.number()
+        .integer()
+        .required(),
+    description: Joi.string()
+        .allow('')
+        .required(),
+    userAgent: Joi.string()
+        .required(),
+    language: Joi.string()
+        .required(),
+    generateRecurrenceToken: Joi.boolean()
+        .required(),
+    restrictedToInstruments: Joi.array().items(Joi.string()),
+    urls: Joi.object({
+        hostUrls: Joi.array().items(Joi.string())
             .required(),
+        completeUrl: Joi.string()
+            .required(),
+        cancelUrl: Joi.string(),
+        paymentUrl: Joi.string(),
+        callbackUrl: Joi.string(),
+        termsOfServiceUrl: Joi.string()
+    }).required(),
+    payeeInfo: Joi.object({
+        payeeId: Joi.string()
+            .allow('')
+            .required(),
+        payeeReference: Joi.string()
+            .allow('')
+            .length(30)
+            .required(),
+        payeeName: Joi.string().allow(''),
+        productCategory: Joi.string().allow(''),
+        orderReference: Joi.string()
+            .allow('')
+            .length(50),
+        subsite: Joi.string()
+            .allow('')
+            .length(40)
+    }).required(),
+    payer: Joi.object({
+        consumerProfileRef: Joi.string()
+    }),
+    orderItems: Joi.array().items(Joi.object({
+        reference: Joi.string()
+            .allow('')
+            .required(),
+        name: Joi.string()
+            .allow('')
+            .required(),
+        type: Joi.string()
+            .valid(
+              'PRODUCT',
+              'SERVICE',
+              'SHIPPING_FEE',
+              'PAYMENT_FEE',
+              'DISCOUNT',
+              'VALUE_CODE',
+              'OTHER'
+            )
+            .required(),
+        class: Joi.string()
+            .allow('')
+            .required(),
+        itemUrl: Joi.string()
+            .allow(''),
+        imageUrl: Joi.string()
+            .allow(''),
+        description: Joi.string()
+            .allow(''),
+        discountDescription: Joi.string()
+            .allow(''),
         quantity: Joi.number()
             .integer()
             .required(),
-        price: Joi.number()
+        quantityUnit: Joi.string()
+            .allow('')
+            .required(),
+        unitPrice: Joi.number()
             .integer()
             .required(),
-        vat: Joi.number()
+        discountPrice: Joi.number()
+            .integer(),
+        vatPercent: Joi.number()
+            .integer()
+            .required(),
+        amount: Joi.number()
+            .integer()
+            .required(),
+        vatAmount: Joi.number()
             .integer()
             .required()
-    }))
+    })),
+    riskIndicator: Joi.object({
+        deliveryEmailAdress: Joi.string(),
+        deliveryTimeFrameIndicator: Joi.string()
+            .valid('01','02','03','04'),
+        preOrderDate: Joi.string(),
+        preOrderPurchaseIndicator: Joi.string()
+            .valid('01','02'),
+        shipIndicator: Joi.string()
+            .valid('01','02','03','04','05','06','07'),
+        giftCardPurchase: Joi.boolean(),
+        reOrderPurchaseIndicator: Joi.string()
+            .valid('01','02'),
+        pickUpAddress: Joi.object({
+            name: Joi.string()
+                .allow(''),
+            streetAddress: Joi.string()
+                .allow(''),
+            coAddress: Joi.string()
+                .allow(''),
+            city: Joi.string()
+                .allow(''),
+            zipCode: Joi.string()
+                .allow(''),
+            countryCode: Joi.string()
+                .allow('')
+        })
+    })
 });
 
-function getCallbackPrefix(req) {
-    const url = req.body.callbackPrefix;
-    if (url) {
-        return url.endsWith('/') ? url : url + '/';
-    } else if (req.body.callbackScheme) {
-        return `${req.body.callbackScheme}://`;
-    } else {
-        return null;
-    }
-}
+/**
+ * Payload scheme for /paymentorders.
+ */
 
-function getPaymentUrl(paymentId) {
-    return `/paymentorder/${paymentId}`;
-}
+module.exports.schema = Joi.object().keys({
+    paymentorder: paymentOrderSchema//.required()
+});
+
 
 /**
- * Creates a Payment Order based on the merchant configuration, purchase data
- * and the incoming Request object.
- *
- * @param {object} req our Express request object
- * @returns {number} ID allocated for the payment
+ * Preprocesses the payment order received from the client.
+ * The payment order is stored in our own database for future
+ * reference. Also, this example defers creating
+ * the payeeReference to the backend, so that is done here as well.
+ * A real application would probably also do some validation
+ * on the payment order here.
+ * @param {object} paymentOrder the payment order to preprocess
  */
-const createPaymentOrder = (req) => {
-    const merchantData = req.body.merchantData;
-
-    // Attach our user ID - this will indicate the owner of this order
-    merchantData.ownerUserId = req.userId;
-
-    const paymentId = global.database.insertPurchse(merchantData);
-
-    const priceReducer = (acc, val) => acc + val.price;
-    const vatReducer = (acc, val) => acc + val.vat;
-
-    const totalPrice = merchantData.items.reduce(priceReducer, 0);
-    const totalVat = merchantData.items.reduce(vatReducer, 0);
-
-    const baseUrl = `https://${req.headers["host"]}`;
-
-    const urls = {
-        hostUrls: [baseUrl],
-        completeUrl: `${baseUrl}/complete`,
-        cancelUrl: `${baseUrl}/cancel`
-    };
-
-    const callbackScheme = req.body.callbackScheme;
-    if (callbackScheme) {
-        const prefix = req.body.callbackPrefix;
-        if (prefix) {
-            const prefixWithSlash = prefix.endsWith('/') ? prefix : prefix + '/';
-            const encodedUrl = encodeURIComponent(getPaymentUrl(paymentId));
-            const encodedScheme = encodeURIComponent(callbackScheme);
-            urls.paymentUrl = `${prefixWithSlash}reload?token=${encodedUrl}&scheme=${encodedScheme}`;
-        } else {
-            urls.paymentUrl = `${callbackScheme}:///reload?token=${encodedUrl}`;
+function preparePaymentOrder(paymentOrder) {
+    // Force amount to 1 for safeguarding against errors in prod testing
+    paymentOrder.amount = 100;
+    paymentOrder.vatAmount = 25;
+    const orderItems = paymentOrder.orderItems;
+    if (orderItems) {
+        for (const item of paymentOrder.orderItems) {
+            item.unitPrice = 0;
+            if (item.discountPrice) item.discountPrice = 0;
+            item.amount = 0;
+            item.vatAmount = 0;
+        }
+        if (orderItems.length > 0) {
+            const firstItem = orderItems[0];
+            firstItem.quantity = 1;
+            firstItem.unitPrice = 100;
+            if (firstItem.discountPrice) firstItem.discountPrice = 0;
+            firstItem.vatPercent = 2500;
+            firstItem.amount = 100;
+            firstItem.vatAmount = 25;
         }
     }
 
-    const paymentOrder = {
-        operation: 'Purchase',
-        currency: merchantData.currency,
-        // Force amount to 1 for safeguarding against errors in prod testing
-        amount: 100,
-        vatAmount: 25,
-        description: merchantData.basketId,
-        userAgent: req.headers["user-agent"],
-        language: merchantData.languageCode,
-        generateRecurrenceToken: false,
-        disablePaymentMenu: false,
-        urls: urls,
-        payeeInfo: {
-            payeeId: global.config.merchantId,
-            payeeReference: paymentId
-        }
-    };
-
-    if (req.body.consumerProfileRef) {
-        paymentOrder.payer = {
-            consumerProfileRef: req.body.consumerProfileRef
-        };
-    }
-
-    return paymentOrder;
-};
+    // Insert the payment order in our own database
+    // to generate a unique reference for it.
+    const paymentId = global.database.insertPurchse(paymentOrder);
+    paymentOrder.payeeInfo.payeeId = global.config.merchantId;
+    paymentOrder.payeeInfo.payeeReference = paymentId
+}
 
 /**
  * Calls the PSP endpoint to create a new Payment Order.
  *
- * The following format is used for our 'merchant data':
- *
- * {
- *   "basketId": "123",
- *   "currency": "SEK",
- *   "languageCode": "sv-SE",
- *   "items": [
- *     {
- *      "itemId": "1",
- *       "quantity": 1,
- *       "price": 1200,
- *       "vat": 300
- *     },
- *     {
- *       "itemId": "2",
- *       "quantity": 2,
- *      "price": 400,
- *      "vat": 75
- *     }
- *   ]
- * }
- *
- * @see https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/payment-orders-resource/#HCreatingapaymentorder
+ * @see https://developer.swedbankpay.com/checkout/payment-menu#payment-menu-back-end
  * @param {object} req our Express request object
  * @param {object} res our Express response object
  */
 module.exports.route = (req, res) => {
-    // Parse & validate merchant data
-    const merchantData = req.body.merchantData;
+    const paymentOrder = req.body.paymentorder;
+    preparePaymentOrder(paymentOrder);
 
-    const { error, value } = merchantDataSchema.validate(merchantData);
-    if (error) {
-        console.log(`merchantData fails to validate: ${JSON.stringify(merchantData)}`);
-        const message = error.details.map(i => i.message).join(',');
-        res.status(400).json({ error: message });
-        return;
-    }
-
-    const paymentOrder = createPaymentOrder(req);
-
-    const postBody = {
-        paymentorder: paymentOrder
-    };
-
-    post('/psp/paymentorders/', postBody)
+    post('/psp/paymentorders/', req.body)
         .then(pspResponse => {
+            // Store the Swedbank Pay id (url) for this payment order
+            // for capture, etc. Note that this example does not really
+            // use the stored id for anything, but a real application
+            // would need it.
             global.database.insertPurchaseIdMapping(
                 paymentOrder.payeeInfo.payeeReference,
                 pspResponse.paymentOrder.id);
 
-            const payload = {
-                url: getPaymentUrl(paymentOrder.payeeInfo.payeeReference),
-                state: pspResponse.paymentOrder.state,
-                operations: pspResponse.operations
-            };
-
-            res.status(200).send(payload).end();
+            res.status(200).send(pspResponse).end();
         })
         .catch(error => {
             console.log('Failed to call PSP payments API');

@@ -35,7 +35,6 @@ app.post('/consumers', celebrate({ body: consumers.schema }),
   consumers.route);
 app.post('/paymentorders', celebrate({ body: paymentorders.schema }),
   paymentorders.route);
-app.get('/paymentorder/:id', paymentorder.route);
 app.get(constants.appleAppSiteAssociationPath, appleAssoc.route);
 app.get(constants.assetLinksPath, assetLinks.route);
 app.get(constants.sdkCallbackReloadPath, celebrate({ query: callbackReload.schema }),
