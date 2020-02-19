@@ -134,7 +134,8 @@ const paymentOrderSchema = Joi.object().keys({
             countryCode: Joi.string()
                 .allow('')
         })
-    })
+    }),
+    disablePaymentMenu: Joi.boolean()
 });
 
 /**
