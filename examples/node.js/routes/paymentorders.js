@@ -56,7 +56,9 @@ const paymentOrderSchema = Joi.object().keys({
             .length(40)
     }).required(),
     payer: Joi.object({
-        consumerProfileRef: Joi.string()
+        consumerProfileRef: Joi.string(),
+        email: Joi.string(),
+        msisdn: Joi.string()
     }),
     orderItems: Joi.array().items(Joi.object({
         reference: Joi.string()

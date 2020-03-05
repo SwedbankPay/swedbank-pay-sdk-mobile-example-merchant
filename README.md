@@ -1,5 +1,14 @@
 # Swedbank Pay Mobile SDK Merchant Backend Implementation Guide
 
+![Swedbank Pay Mobile SDK Example Merchant][opengraph-image]
+
+## About
+
+**IMPORTANT**: This backend implementation is at an early stage and not yet used in production.
+We do not offer support for this version, but will release supported versions
+in the future. Feel free to play around, but for full functionality and support,
+please wait for the supported, stable release.
+
 This repository holds information about how to implement a Merchant Backend application to act as an endpoint between a merchant's mobile application and the Swedbank Pay APIs. 
 
 It features a rough guide on what the merchant backend MUST do and also offers insights on what the merchant backend SHOULD do to complete its function in an efficient and secure manner.
@@ -22,7 +31,7 @@ This chapter addresses the things to consider when implementing a Merchant Backe
 
 First of all you MUST implement the Swedbank Pay Mobile Backend REST API. Pick a suitable technology stack for your programming language of choice.
 
-See the [Swedbank Pay Mobile Backend API Reference](https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/SwedbankPaysdk_openapi.yaml) for more info.
+See the [Swedbank Pay Mobile Backend API Reference][openapi] for more info.
 
 #### Authentication
 
@@ -44,7 +53,7 @@ Your merchant backend MUST integrate to the Swedbank Pay eCommerce API. For this
 
 These API calls are not instantaneous; consider this for performance purposes of your backend. Implement the HTTP requests using the best practices of your programming language / platform.
 
-See the [Swedbank Pay eCommerce API Technical Reference](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/) for more info.
+See the [Swedbank Pay Developer Portal][developer] for more info.
 
 ### Information Security 
 
@@ -56,8 +65,8 @@ The API MUST be implemented in a secure manner over an encrypted TLS connection.
 
 Here are listed the essential resources needed for the implementation work:
 
-* [Swedbank Pay Mobile Backend API Reference](https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/SwedbankPaysdk_openapi.yaml) 
-* [Swedbank Pay eCommerce API Technical Reference](https://developer.payex.com/xwiki/wiki/developer/view/Main/ecommerce/technical-reference/)
+* [Swedbank Pay Mobile Backend API Reference][openapi] 
+* [Swedbank Pay Developer Portal][developer]
 
 ## Examples
 
@@ -66,5 +75,6 @@ See the subdirectory `examples/` for implementation examples in some popular pro
 * Java
 * Node.js
 
-
-
+[opengraph-image]: https://repository-images.githubusercontent.com/209760624/7b57e800-53eb-11ea-87c8-9ac9ad4a8074
+[developer]: https://developer.swedbankpay.com/
+[openapi]: https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/SwedbankPaysdk_openapi.yaml
