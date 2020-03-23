@@ -23,6 +23,7 @@ const appleAppSiteAssociationPath = '/.well-known/apple-app-site-association';
 const assetLinksPath = '/.well-known/assetlinks.json';
 
 const sdkCallbackReloadPath = '/sdk-callback/reload';
+const androidIntentCallbackPath = '/sdk-callback/android-intent'
 
 module.exports.apiKeyHeaderName = apiKeyHeaderName;
 module.exports.accessTokenHeaderName = accessTokenHeaderName;
@@ -33,3 +34,4 @@ module.exports.problemBadRequest = problemBadRequest;
 module.exports.appleAppSiteAssociationPath = appleAppSiteAssociationPath;
 module.exports.assetLinksPath = assetLinksPath;
 module.exports.sdkCallbackReloadPath = sdkCallbackReloadPath;
+module.exports.androidIntentCallbackPath = androidIntentCallbackPath;

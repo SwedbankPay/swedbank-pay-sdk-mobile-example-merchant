@@ -28,6 +28,7 @@ const paymentorder = require('./routes/paymentorder.js');
 const appleAssoc = require('./routes/apple-app-site-association.js');
 const assetLinks = require('./routes/assetlinks.js');
 const callbackReload = require('./routes/sdk-callback-reload.js');
+const androidIntentCallback = require('./routes/android-intent-callback.js');
 
 // Specify our routes
 app.get('/', index.route);
@@ -39,6 +40,8 @@ app.get(constants.appleAppSiteAssociationPath, appleAssoc.route);
 app.get(constants.assetLinksPath, assetLinks.route);
 app.get(constants.sdkCallbackReloadPath, celebrate({ query: callbackReload.schema }),
   callbackReload.route);
+app.get(constants.androidIntentCallbackPath, celebrate({ query: androidIntentCallback.schema }),
+  androidIntentCallback.route);
 
 // Handle the errors from Celebrate. Must be defined after the routes.
 app.use(celebrateProblems);
