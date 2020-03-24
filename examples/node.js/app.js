@@ -51,6 +51,9 @@ if (process.env.SWEDBANKPAY_SERVER_BASE_URL) {
     + `${process.env.SWEDBANKPAY_SERVER_BASE_URL}`);
 }
 
+// Use X-Forwarded-Proto (TLS is terminated at the load balancer).
+app.set('trust proxy', true);
+
 // Start the server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
