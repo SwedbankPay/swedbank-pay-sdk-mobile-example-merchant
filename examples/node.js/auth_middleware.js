@@ -19,7 +19,8 @@ const auth = (req, res, next) => {
         return;
     }
     if (req.path == constants.sdkCallbackReloadPath
-       || req.path == constants.androidIntentCallbackPath) {
+       || req.path == constants.androidIntentCallbackPath
+       || req.path == constants.iosUniversalLinkCallbackPath) {
         console.log('Skipping authentication middleware for callback page.');
         next();
         return;
