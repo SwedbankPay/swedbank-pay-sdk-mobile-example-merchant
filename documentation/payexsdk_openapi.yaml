@@ -1,7 +1,7 @@
 openapi: '3.0.2'
 info:
   title: PayEx Mobile Backend
-  version: '1.0-beta02'
+  version: '1.0-beta03'
 components:
   schemas:
     TopLevelResources:
@@ -20,45 +20,35 @@ components:
         consumers: /consumers
         paymentorders: /paymentorders
 
-    StartConsumerSessionArguments:
+    ConsumerSessionArguments:
       type: object
       required:
-        - consumerCountryCode
+        - operation
+        - language
+        - shippingAddressRestrictedToCountryCodes
       properties:
-        consumerCountryCode:
-          description: Consumer's country of residence
+        operation:
+          description: The operation to perform. Must be `initiate-consumer-session`. See [Swedbank Pay documentation](https://developer.swedbankpay.com/checkout/checkin#step-1-initiate-session-for-consumer-identification).
+          type: string
+          enum: 
+            - initiate-consumer-session
+        language:
+          description: Language to use in the checkin UI. See [Swedbank Pay documentation](https://developer.swedbankpay.com/checkout/checkin#step-1-initiate-session-for-consumer-identification).
           type: string
           enum:
-            - 'NO'
-            - SE
-        msisdn:
-          description: Consumer's mobile phone number *in international format*
-          type: string
-        email:
-          description: Consumer's e-mail address
-          type: string
-        nationalIdentifier:
-          type: object
-          required:
-            - socialSecurityNumber
-            - countryCode
-          properties:
-            socialSecurityNumber:
-              description: Consumer's social security number
-              type: string
-            countryCode:
-              description: Issuer of the social security number
-              type: string
-              enum:
-                - 'NO'
-                - SE  
+            - nb-NO
+            - sv-SE
+            - en-US
+        shippingAddressRestrictedToCountryCodes:
+          description: List of ISO-3166 codes of countries the merchant can ship to. See [Swedbank Pay documentation](https://developer.swedbankpay.com/checkout/checkin#step-1-initiate-session-for-consumer-identification).
+          type: array
+          items: 
+            type: string
+            example: SE
       example:
-        consumerCountryCode: SE
-        msisdn: +4798765432
-        email: olivia.nyhuus@payex.com
-        nationalIdentifier:
-          socialSecurityNumber: 26026708248
-          countryCode: SE
+        operation: initiate-consumer-session
+        language: sv-SE
+        shippingAddressRestrictedToCountryCodes: [SE, 'NO']
 
     ConsumerSession:
       type: object
@@ -78,66 +68,336 @@ components:
 
     CreatePaymentOrderArguments:
       type: object
+      required:
+        - paymentorder
       properties:
-        consumerProfileRef:
-          description: The payer's consumer profile reference. Omitted for anonymous payment.
-          type: string
-        callbackPrefix:
-          description: The prefix to use for callbacks to the app.
-          type: string
-        merchantData:
-          description: the merchantData originally passed to the Mobile SDK
+        paymentorder:
+          description: The payment order as specigied in the [Swedbank Pay documentation](https://developer.swedbankpay.com/checkout/payment-menu#request).
+          type: object
+          required:
+            - operation
+            - currency
+            - amount
+            - vatAmount
+            - description
+            - userAgent
+            - language
+            - generateRecurrenceToken
+            - urls
+            - payeeInfo
+          properties:
+            operation:
+              description: The operation the payment order is to perform
+              type: string
+              enum:
+                - Purchase
+                - Verify
+            currency:
+              description: The ISO 4217 code of the currency to use for the payment order
+              type: string
+              example: SEK
+            amount:
+              description: The amount to charge; in the smallest unit of the currency. E.g. 10000 = 100.00 SEK
+              type: integer
+              example: 10000
+            vatAmount:
+              description: The amount of VAT included in the charge; in the smallest unit of the currency.
+              type: integer
+              example: 2000
+            description:
+              description: Description of the payment order
+              type: string
+            userAgent:
+              description: The User Agent making this request.
+              type: string
+            language:
+              description: The language to use in the Payment Menu UI.
+              type: string
+              enum:
+                - nb-NO
+                - sv-SE
+                - en-US 
+            generateRecurrenceToken:
+              description: If `true`, then a token is generated that can be used in server-to-server recurring payments.
+              type: boolean
+            restrictedToInstruments:
+              description: Usage of this field requires an agreement with Swedbank Pay. Please refer to [Swedbank Pay documentation](https://developer.swedbankpay.com/checkout/other-features#creating-a-payment-order).
+              type: array
+              items:
+                type: string
+            urls:
+              description: URLs relevant to this payment order
+              type: object
+              required:
+                - hostUrls
+                - completeUrl
+              properties:
+                hostUrls:
+                  description: List of valid page urls that can host the payment menu
+                  type: array
+                  items:
+                    type: string
+                    example: https://your.merchant.backend/
+                completeUrl: 
+                  description: The URL that the payment menu will redirect to when the payment is complete
+                  type: string
+                  example: https://your.merchant.backend/complete
+                cancelUrl: 
+                  description: The URL that the payment menu will redirect to when the payment is cancelUrl
+                  type: string
+                  example: https://your.merchant.backend/cancel
+                paymentUrl:
+                  description: |
+                    The URL that the payment process will redirect to when the payment menu needs to be reloaded
+
+                  type: string
+                  example: https://your.merchant.backend/sdk-callback/android-intent?package=your.ecom.app&id=app-payment-id
+                callbackUrl:
+                  description: The URL where Swedbank Pay will make POST requests when the state of the payment order changes.
+                  type: string
+                  example: https://your.mechant.backend/server-callback
+                termsOfServiceUrl:
+                  description: The URL that will be opened when the user needs to be shown your Terms of Service. Must be a https URL.
+                  type: string
+                  example: https://your.ecom.site/terms-of-service
+            payeeInfo:
+              description: Object containing information about the payee
+              type: object
+              required:
+                - payeeId
+                - payeeReference
+              properties:
+                payeeId:
+                  description: The ID of the payee, usually the merchant ID.
+                  type: string
+                payeeReference:
+                  description: A unique reference to this payment order in your system. See [Swedbank Pay documentation](https://developer.swedbankpay.com/checkout/other-features#payeereference) for details.
+                  type: string
+                payeeName:
+                  description: Name of the payee
+                  type: string
+                productCategory:
+                  description: Merchant specified product catergory for this payment order.
+                  type: string
+                orderReference:
+                  description: Reference to merchant's own systems
+                  type: string
+                subsite:
+                  description: Used do implement [split settlement](https://developer.swedbankpay.com/checkout/other-features#split-settlement)
+                  type: string
+            payer:
+              description: Object containing information about the payer.
+              type: object
+              properties:
+                consumerProfileRef:
+                  description: The consumer profile reference obtained from the checkin flow
+                  type: string
+                email:
+                  description: E-mail address of the payer
+                  type: string
+                msisdn:
+                  description: Mobile phone number of the payer
+                  type: string
+            orderItems:
+              description: List of items being bought with this payment order
+              type: array
+              items:
+                type: object
+                required:
+                  - reference
+                  - name
+                  - type
+                  - class
+                  - quantity
+                  - quantityUnit
+                  - unitPrice
+                  - vatPercent
+                  - amount
+                  - vatAmount
+                properties:
+                  reference:
+                    description: Reference that identifies the items
+                    type: string
+                  name:
+                    description: Name of the items
+                    type: string
+                  type:
+                    description: Type of the items
+                    type: string
+                    enum:
+                      - PRODUCT
+                      - SERVICE
+                      - SHIPPING_FEE
+                      - PAYMENT_FEE
+                      - DISCOUNT
+                      - VALUE_CODE
+                      - OTHER
+                  class:
+                    description: Merchant specified classification for the items
+                    type: string
+                  itemUrl:
+                    description: URL to a page with information about the items
+                    type: string
+                  imageUrl:
+                    description: URL to an image of the items
+                    type: string
+                  description:
+                    description: Human-readable description of the items
+                    type: string
+                  discountDescription:
+                    description: Human-readable description of any discount on the items
+                    type: string
+                  quantity:
+                    description: Four decimal precision quantity of the items
+                    type: integer
+                  quantityUnit:
+                    description: The unit of the quantity
+                    type: string
+                  unitPrice:
+                    description: Price pre unit, including VAT
+                    type: integer
+                  discountPrice:
+                    description: If the item is discounted, the discounted price including VAT
+                    type: integer
+                  vatPercent:
+                    description: The VAT percent on the item, multiplied by 100; e.g. 25% => `2500`
+                    type: integer
+                  amount:
+                    description: The total amount charged for this item; in the smallest unit of the currency.
+                    type: integer
+                  vatAmount:
+                    description: The total amount of VAT charged for this item; in the smallest unit of the currency.
+                    type: integer
+            riskIndicator:
+              description: Additional information for identifying the payer. Include as much as possible to reduce the chance of 3D-Secure authentication.
+              type: object
+              properties:
+                deliveryEmailAdress:
+                  description: E-mail address for electronic delivery
+                  type: string
+                deliveryTimeFrameIndicator:
+                  description: |
+                    Merchandise delivery timeframe
+
+                    01: Electronic Delivery
+                    02: Same day shipping
+                    03: Overnight shipping
+                    04: Two-day or more shipping
+                  type: string
+                  enum:
+                    - '01'
+                    - '02'
+                    - '03'
+                    - '04'
+                preOrderDate:
+                  description: Expected availability date for pre-orders. Format `YYYYMMDD`.
+                  type: string
+                  example: '20210123'
+                preOrderPurchaseIndicator:
+                  description: |
+                    Indicates whether the payer is placing an order for merchandise with a future availability or release date.
+
+                    01: Merchandise available
+                    02: Future availability
+                  type: string
+                  enum:
+                    - '01'
+                    - '02'
+                shipIndicator:
+                  description: |
+                    Shipping method for the purchase
+
+                    01: Ship to cardholder’s billing address
+                    02: Ship to another verified address on file with merchant
+                    03: Ship to address that is different than cardholder’s billing address
+                    04: Ship to Store / Pick-up at local store
+                    05: Digital goods
+                    06: Travel and Event tickets, not shipped
+                    07: Other, e.g. gaming, digital service
+                  type: string
+                  enum:
+                    - '01'
+                    - '02'
+                    - '03'
+                    - '04'
+                    - '05'
+                    - '06'
+                    - '07'
+                giftCardPurchase:
+                  description: '`true` if this is a purchase of a gift card'
+                  type: boolean
+                reOrderPurchaseIndicator:
+                  description: |
+                    Indicates whether the payer is placing an order for merchandise with a future availability or release date.
+
+                    01: Merchandise available
+                    02: Future availability
+                  type: string
+                  enum:
+                    - '01'
+                    - '02'
+                pickUpAddress:
+                  description: If `shipIndicator` is `04`, fill this object to decrease the risk factor
+                  type: object
+                  properties:
+                    name:
+                      description: Name of the payer
+                      type: string
+                    streetAddress:
+                      description: Address of the payer
+                      type: string
+                    coAddress:
+                      description: C/O address of the payer
+                      type: string
+                    city:
+                      description: City of the payer
+                      type: string
+                    zipCode:
+                      description: Zip code of the payer
+                      type: string
+                    countryCode:
+                      description: Country code of the payer
+                      type: string
+            disablePaymentMenu:
+              description: If `true`, and there is only one valid payment instrument, proceeds directly to that instrument in the UI
+              type: boolean
+
       example:
-        consumerProfileRef: 4b9b9160cc9b0668bf18c1c42f2fa994e89728a5f3022d53efeacd6f6f56d8f8
-        merchantData:
-          basketId: be3defe7-cc5a-459e-bce0-3e192ee0e45b
+        paymentOrder:
+          operation: Purchase
           currency: SEK
-          languageCode: sv-SE
-          items:
-            - itemId: 1
+          amount: 10000
+          vatAmount: 2000
+          description: Order 1234567
+          userAgent: SwedbankPaySDK-Android/1.0
+          language: en-US
+          generateRecurrenceToken: false
+          urls:
+            hostUrls:
+              - https://your.merchant.backend/
+            completeUrl: https://your.merchant.backend/complete
+            cancelUrl: https://your.merchant.backend/cancel
+            paymentUrl: https://your.merchant.backend/sdk-callback/android-intent?package=your.ecom.app&id=abcdef
+          payeeInfo:
+            payeeId: merchant-token
+            payeeReference: order-id
+          orderItems:
+            - reference: item987
+              name: Demo Item
+              type: PRODUCT
+              class: TestProduct
               quantity: 1
-              price: 1250
-              vat: 250
+              quantityUnit: pcs
+              unitPrice: 10000
+              vatPercent: 2500
+              amount: 10000
+              vatAmount: 2000
 
     PaymentOrder:
       type: object
       required:
-        - url
-        - state
+        - operations
       properties:
-        url:
-          description: >
-            A URL referencing this payment order. This can be used in a call to
-            `GET {paymentOrder}`.
-
-
-            This must be a URL managed by your implementation; do not pass the PayEx
-            payment order url here. Your implementation must store the PayEx URL
-            such that it can be used when the client later makes a GET request to
-            the URL returned here.
-          type: string
-        state:
-          description: >
-            The state of the payment order as returned by the
-            [Swedbank Pay API](https://developer.swedbankpay.com/checkout/other-features#payment-orders).
-            Please refer to that documentation for possible values.
-
-
-            At the moment of writing, the possible values are `Ready`, `Pending`, `Failed`, and `Aborted`
-          type: string
-        failureReason:
-          description: >
-            If `state` is `Failed`, this property shall contain the failure reason as returned by the
-            [Swedbank Pay API](https://developer.swedbankpay.com/checkout/other-features#transactions).
-
-
-            A payment order does not have a failure reason; rather the transactions contained
-            in a payment order can have failure reasons. The backend should choose the most
-            relevant failure reason from the failed transactions. Usually is should be
-            the most recent failed `Authorization` transaction. N.B! A failed transaction does not
-            mean the containing payment order has failed. It is important to only populate this
-            field if the `state` of the payment order is `Failed`.
-          type: string
         operations:
           description: >
             The `operations` array from the [Swedbank Pay API](https://developer.swedbankpay.com/checkout/other-features#operations).
@@ -149,10 +409,8 @@ components:
               method: GET
               contentType: application/javascript
               href: https://ecom.externalintegration.payex.com/paymentmenu/core/scripts/client/px.paymentmenu.client.js?token=5300a73308c9bf5ef02ffa5283069a36f37cf4f07a0e109e9e623f92bf3947dd&culture=sv-SE
-              
+
       example:
-        url: /paymentorder/1569321659041
-        state: Ready
         operations:
           - rel: view-paymentorder
             method: GET
@@ -210,14 +468,11 @@ paths:
               operationId: POST paymentorders
               parameters:
                 paymentorders: $response.body/paymentorders
-                
-
-
 
   /{consumers}:
     parameters:
-      - in: path
-        name: consumers
+      - name: consumers
+        in: path
         required: true
         schema:
           type: string
@@ -225,30 +480,25 @@ paths:
       operationId: POST consumers
       summary: Initiates a consumer identification session
       description: >
-        This operation shall start a consumer identification session using the arguments parsed
-        from the request body. It returns an array of operations that can be used to complete the
-        identification session as described
-        [here](https://developer.swedbankpay.com/checkout/checkin#checkin-front-end).
+        This operation starts a consumer identification session by forwarding the request
+        to the [Swedbank Pay API](https://developer.swedbankpay.com/checkout/checkin#step-1-initiate-session-for-consumer-identification).
+        It returns the response from that request.
 
 
-        The default implementation does some lightweight validation on the input values,
-        and then forwards the call to the PayEx API; i.e. `POST /psp/consumers` with
-        `"operation": "initiate-consumer-session"`, and the other arguments as given to the
-        call to this operation. It then returns the `operations` array from the received result.
-        The default implementation is usable as-is, but if you wish, you could customize it to,
-        for example, check an HMAC header.
+        The implementation is encouraged to validate the request; it should not pass on
+        nonsensical requests to the Swedbank Pay API.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StartConsumerSessionArguments'
+              $ref: '#/components/schemas/ConsumerSessionArguments'
       responses:
         '200':
           description: >
             Identification successfully started. It will continue by embedding the returned
             `view-consumer-identification` link in html as specified
-            [here](https://developer.swedbankpay.com/checkout/checkin#checkin-front-end).
+            [here](https://developer.swedbankpay.com/checkout/checkin#step-2-display-swedbank-pay-checkin-module).
           content:
             application/json:
               schema:
@@ -256,8 +506,8 @@ paths:
 
   /{paymentorders}:
     parameters:
-      - in: path
-        name: paymentorders
+      - name: paymentorders
+        in: path
         required: true
         schema:
           type: string
@@ -265,30 +515,14 @@ paths:
       operationId: POST paymentorders
       summary: Creates a new payment order
       description: >
-        This operation shall create a new payment order. The new payment order shall be referenceable
-        by a url returned by this call. The result also contains an array of operations
-        that can be used to complete the payment order as described
-        [here](https://developer.swedbankpay.com/checkout/payment-menu#payment-menu-front-end).
-
-
-        Payment orders are created by calling the `POST /psp/paymentorders` 
+        This operation creates a new payment order by forwarding the request to the
         [Swedbank Pay API](https://developer.swedbankpay.com/checkout/payment-menu#request).
-        The default implementation will take care of executing the https request, but you must
-        provide custom business logic that creates the `paymentorder` object for the request.
-        For this you should examine the `merchantData` value, which is the JSON representation
-        of the `merchantData` object used in the Mobile SDK call that initiated this payment.
+        It returns the response from that request.
 
 
-        The Mobile SDK embeds one of the returned links in a html template and renders the result using
-        the backend URL as the page URL for same-origin-policy purposes. It is therefore
-        required that `hostUrls` contain the backend URL. It should not contain other values.
-
-
-        The `paymentUrl` to Swedbank Pay must be set according to the `callbackPrefix` parameter.
-        `paymentUrl` shall have the following format: `<callbackPrefix>/reload?url=<escapedUrl>`, where `<escapedUrl>`
-        is a percent-encoding of the payment order url returned by this call. If `callbackPrefix` ends with a slash, do not add
-        an extra slash after it. (Note: This specification will be updated to require `completeUrl` and `cancelUrl`
-        to be formed analogously when Swedbank Pay backend supports arbitrary schemes for them.)
+        The implementation should validate the request and not pass on nonsensical requests.
+        Furthermore, you may wish to do some preprocessing on the payment order in your
+        merchant backend, e.g. setting your merchand ID as the payeeId.
       requestBody:
         required: true
         content:
@@ -300,34 +534,156 @@ paths:
           description: >
             Payment order successfully created. It will continue by embedding the returned
             `view-paymentorder` link in html as specified
-            [here](https://developer.swedbankpay.com/checkout/other-features#view-payment-order).
+            [here](https://developer.swedbankpay.com/checkout/payment-menu#step-4-display-the-payment-menu).
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentOrder'
-          links:
-            GetPaymentOrder:
-              description: N.B. The URL must be *resolved* against the resource request URL, not simply appended to it.
-              operationId: GET paymentorder
-              parameters:
-                paymentorder: $response.body/url
 
-  /{paymentorder}:
-    parameters:
-      - in: path
-        name: paymentorder
-        required: true
-        schema:
-          type: string
+  /sdk-callback/android-intent:
     get:
-      operationId: GET paymentorder
-      summary: Retrieves the status of a payment order
+      parameters:
+        - name: package
+          in: query
+          description: The package id of the Android app to redirect to
+          required: true
+          schema:
+            type: string
+            example: your.ecom.app
+      summary: Endpoint for redirecting back to an Android app
       description: >
-        This operation shall retrieve the specified payment order.
+        N.B! Endpoints under `/sdk-callback/` exist only to support routing http(s) URLs
+        to mobile applications. As such they can be separate form the rest of the backend.
+        The mobile SDKs have utility functions that work if your `/sdk-callback/` endpoints
+        are hosted at the same domain as the backend entry point.
+
+
+        For maximum compatibility, it is best to use http(s) urls for the paymentUrl.
+        Using this endpoint to form the paymentUrl enables you to do this.
+
+
+        This endpoint always returns a redirect response, where the url to redirect to
+        is an [Android intent url](https://developer.chrome.com/multidevice/android/intents),
+        where the package of the intent is set to the package given in the package parameter,
+        the action to `com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER`, and the uri (data) of the
+        intent is the same as the url used to invoke this endpoint.
+
+
+        For example, if this endpoint is invoked at `https://your.merchant.backend/sdk-callback?package=your.ecom.app&id=abcdef`,
+        then the redirect will result in an intent with `package = your.ecom.app`,
+        `action = com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER`, and
+        `data = https://your.merchant.backend/sdk-callback?package=your.ecom.app&id=abcdef`.
+        This enables navigation to this url to be routed to the app even if it is opened
+        in a browser, and requires no further configuration of the app using the SDK.
       responses:
-        '200':
-          description: The payment order
-          content:
-            application/json:
+        '301':
+          description: >
+            Redirect to an intent url that starts an activity with the same url as was used to invoke this.
+          headers:
+            Location:
+              description: The generated intent url 
               schema:
-                $ref: '#/components/schemas/PaymentOrder'
+                type: string
+                example: intent://your.merchant.backend/sdk-callback?package=your.ecom.app&id=abcdef#Intent;scheme=https;action=com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER;package=your.ecom.app;end;
+
+  /sdk-callback/ios-universal-link:
+    get:
+      parameters:
+        - name: scheme
+          in: query
+          description: Custom url scheme used for fallback
+          required: true
+          schema:
+            type: string
+            example: yourecomapp
+        - name: language
+          in: query
+          description: Language to use in the trampoline page
+          required: true
+          schema:
+            type: string
+            enum:
+              - nb-NO
+              - en-US
+              - sv-SE
+        - name: app
+          in: query
+          description: App name to use in the trampoline page
+          required: false
+          schema:
+            type: string
+            example: Your eCom App
+        - name: fallback
+          in: query
+          description: If `true`, redirects to custom scheme url rather than the trampoline page
+          required: false
+          schema:
+            type: boolean
+      summary: Endpoint for redirecting back to an iOS app
+      description: >
+        N.B! Endpoints under `/sdk-callback/` exist only to support routing http(s) URLs
+        to mobile applications. As such they can be separate form the rest of the backend.
+        The mobile SDKs have utility functions that work if your `/sdk-callback/` endpoints
+        are hosted at the same domain as the backend entry point.
+
+
+        For maximum compatibility, it is best to use http(s) urls for the paymentUrl.
+        Using this endpoint to form the paymentUrl enables you to do this.
+
+
+        Like the Android equivalent, this endpoint always returns a redirect response.
+        On iOS, the preferred way of routing a url to an app is to use [Universal Links](https://developer.apple.com/ios/universal-links/).
+        The domain of the paymentUrl, i.e. the domain of the merchant backend, should
+        be added as an "applinks" associated domain to the app (of course, this requires
+        the appropriate /.well-known/apple-app-site-association file to be served;
+        the example backend has provisions for this). 
+
+
+        However, Universal Links and 3D-Secure flows have incompatible characteristics:
+        navigation to a Universal Link is only routed to the app if it originated from
+        user interaction, while 3D-Secure flows often have an automatic redirect at the end.
+        This can sometimes cause the Universal Link to be opened in Safari instead of the app.
+        Safari then receives the redirect response from this endpoint, which will be to
+        an attractive website with a continue button (the "trampoline page"). That continue button
+        navigates back to the paymentUrl, but appended with a `fallback=true` parameter, giving 
+        Safari another chance to route the navigation to the app. If even that fails, then
+        the `fallback=true` parameter causes the redirect to instead be to a custom-scheme url.
+        The custom scheme should be one unique to the app, ensuring correct routing. The downside
+        of the fallback mechanism is an ugly confirmation dialog being shown.
+
+
+        Note that for the above contraption to work correctly, the trampoline page must be hosted
+        on a different domain, as Universal Links will only be followed if the navigation starts
+        from a different domain. For this purpose, Swedbank Pay hosts a generic trampoline page
+        at `https://[url TBD]?target=<paymentUrl-with-fallback=true>&language=<language-code>&app=<app-name>`.
+        The example backend uses this as the trampoline page.
+
+
+        To illustrate, here is a "full" flow:
+
+        1.  Navigate to `https://your.merchant.backend/sdk-callback/ios-universal-link?scheme=yourecomapp&language=en-US&id=abcdef&app=Your%20eCom%20App`.
+            This is a Universal Link, and in some cases will immediately be routed to your app.
+            If it is opened in Safari instead, we are redirected (HTTP 301) to:
+        2.  `https://[url TBD]?target=https%3A%2F%2Fyour.merchant.backend%2Fsdk-callback%2Fios-universal-link%3Fscheme%3Dyourecomapp%26language%3Den-US%26id%3Dabcdef%26app%3DYour%2520eCom%2520App%26fallback%3Dtrue&language=en-US&app=Your%20eCom%20App`
+            This is the trampoline page. It contains a single link (button), which navigates to:
+        3.  `https://your.merchant.backend/sdk-callback/ios-universal-link?scheme=yourecomapp&language=en-US&id=abcdef&app=Your%20eCom%20App&fallback=true`
+            This is again a Universal Link. This time the navigation started from a user interaction, 
+            so unless there is a problem with your configuration, it will be routed to your app
+            rather that opened in Safari. If, however, something goes wrong and the link is instead
+            opened in Safari, we are redirected to:
+        4.  `yourecomapp://your.merchant.backend/sdk-callback/ios-universal-link?scheme=yourecomapp&language=en-US&id=abcdef&app=Your%20eCom%20App&fallback=true`
+            This is a custom scheme link, so it will be routed to your app, but only after
+            a confirmation dialog.
+
+
+        The SDK has logic to recognize the different forms as being equivalent to the paymentUrl.
+      responses:
+        '301':
+          description: >
+            Redirect to the trampoline page or to a custom-scheme url
+          headers:
+            Location:
+              description: The trampoline page or custom-scheme url
+              schema:
+                type: string
+                example: https://[url TBD]?target=https%3A%2F%2Fyour.merchant.backend%2Fsdk-callback%2Fios-universal-link%3Fscheme%3Dyourecomapp%26language%3Den-US%26id%3Dabcdef%26app%3DYour%2520eCom%2520App%26fallback%3Dtrue&language=en-US&app=Your%20eCom%20App
