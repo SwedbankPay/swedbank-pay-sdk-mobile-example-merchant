@@ -487,6 +487,11 @@ paths:
 
         The implementation is encouraged to validate the request; it should not pass on
         nonsensical requests to the Swedbank Pay API.
+
+
+        The mobile SDK will embed the received `view-consumer-identification` in a
+        html page as specicied in the [documentation](https://developer.swedbankpay.com/checkout/checkin#step-2-display-swedbank-pay-checkin-module).
+        When it receives the consumerProfileRef, it will continue with creating a payment.
       requestBody:
         required: true
         content:
@@ -521,8 +526,30 @@ paths:
 
 
         The implementation should validate the request and not pass on nonsensical requests.
+
+
         Furthermore, you may wish to do some preprocessing on the payment order in your
-        merchant backend, e.g. setting your merchand ID as the payeeId.
+        merchant backend. The example backend sets `paymentorder.payeeInfo.payeeId`
+        before forwarding the request; your implementation is encouraged to do the same.
+        Additionally, you probably want to check that the payment order has the correct
+        amount and orderItems.
+
+
+        The mobile environment places special requirements on the `paymentUrl`.
+        As "the payment" actually exists inside an app and not a website,
+        we need a way to get back to the app that created the payment whenever
+        there is a navigation to paymentUrl. Please see the `/sdk-callback/`
+        endpoints for details on how this is done on the different platforms.
+        This endpoint neither needs nor has special treatment for paymentUrl;
+        it just passes whatever it was given. The SDK, however, contains utility
+        functions that are aware of the `/sdk-callback/` endpoints and can create
+        suitable paymentUrls.
+
+
+        The mobile SDK will embed the received `view-consumer-identification` in a
+        html page as specicied in the [documentation](https://developer.swedbankpay.com/checkout/payment-menu#step-4-display-the-payment-menu).
+        It will then monitor the html content for navigation to the payment order's
+        urls (`paymentorder.urls`), and react accordningly.
       requestBody:
         required: true
         content:
