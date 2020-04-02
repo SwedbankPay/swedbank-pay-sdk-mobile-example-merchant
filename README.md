@@ -77,4 +77,4 @@ See the subdirectory `examples/` for implementation examples in some popular pro
 
 [opengraph-image]: https://repository-images.githubusercontent.com/209760624/7b57e800-53eb-11ea-87c8-9ac9ad4a8074
 [developer]: https://developer.swedbankpay.com/
-[openapi]: https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/SwedbankPaysdk_openapi.yaml
+[openapi]: https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/swedbankpaysdk_openapi.yaml
