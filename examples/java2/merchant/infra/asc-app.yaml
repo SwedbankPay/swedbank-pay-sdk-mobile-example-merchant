@@ -20,7 +20,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: ASG Security Group
-      VpcId: vpc-1817f961
+      VpcId: vpc-de29c2a7
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           FromPort: "-1"
@@ -43,13 +43,13 @@ Resources:
         - eu-west-1b
         - eu-west-1c
       Cooldown: 60
-      DesiredCapacity: 2
+      DesiredCapacity: 1
       HealthCheckGracePeriod: 60
       HealthCheckType: ELB
       LaunchConfigurationName: !Ref LaunchConfig
       LoadBalancerNames: [!Ref ElbId]
-      MaxSize: 2
-      MinSize: 2
+      MaxSize: 1
+      MinSize: 1
       Tags: [{"Key": "Name", "Value": {"Fn::Join": [" ",[{"Ref": "AWS::StackName"}, "resource"]]}, "PropagateAtLaunch": "True"}]
   LaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
