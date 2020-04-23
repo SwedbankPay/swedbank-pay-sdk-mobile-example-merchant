@@ -1,0 +1,23 @@
+@startuml
+
+actor User
+participant App
+participant SDK
+participant WebView
+
+group paymentUrl recognized: reload payment menu
+  SDK -> WebView : Reload <html>...<script src="[paymentorder-script]">...payex.hostedView.paymentMenu(...)...</html>
+  SDK <- WebView : Navigate to completeUrl
+  note left : Assuming payment was completed
+  SDK -> WebView : Cancel navigation
+  alt Android
+    SDK -> SDK : PaymentViewModel.state <- SUCCESS
+    App <- SDK : Observer<PaymentViewModel.State>.onChanged(SUCCESS)
+  else iOS
+    App <- SDK : SwedbankPaySDKDelegate.paymentComplete()
+  end
+  App -> App : Remove payment UI component
+  User <- App : Report payment success
+end
+
+@enduml

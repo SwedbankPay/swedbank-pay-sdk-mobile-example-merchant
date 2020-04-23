@@ -1,0 +1,12 @@
+@startuml
+
+group Once
+  alt Android
+    App <-> SDK : Configuration.Builder(backendUrl)...build()
+    App -> SDK : PaymentFragment.defaultConfiguration = configuration
+  else iOS
+    App <-> SDK : SwedbankPaySDK.Configuration.init(backendUrl: backendUrl)
+  end
+end
+
+@enduml

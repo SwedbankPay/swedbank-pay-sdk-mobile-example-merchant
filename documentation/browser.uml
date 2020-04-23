@@ -1,0 +1,78 @@
+@startuml
+
+actor User
+participant Browser
+participant "Merchant Backend" as Back
+participant "Universal Link Trampoline" as Trampoline
+participant System
+participant SDK
+participant App
+
+opt paymentUrl opened in Browser
+  alt Android
+    Browser -> Back : Load paymentUrl
+    Browser <- Back : 301 Moved Permanently\nintent://[paymentUrl-without-scheme]/#Intent;scheme=[paymentUrl-scheme];\naction=com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER;package=[app.package];end;
+    Browser -> Browser : Parse Android Intent URL
+    Browser -> System : Start activity with the parsed Intent, where the Intent Uri is paymentUrl
+    System -> SDK : Start callback activity
+    SDK -> SDK : Recognize paymentUrl
+  else iOS
+    alt Happiest Path
+      Browser <-> System : Recognize that paymentUrl is a Universal Link for App
+      Browser -> System : Launch app with paymentUrl
+      note right
+        Universal Links have certain conditions
+        for them to be activated. One of these is
+        that the navigation must have started
+        from a user interaction. As many 3D-Secure
+        pages have an automatic redirect, this can
+        cause the link to be opened in the Browser
+        instead. Therefore the chance for this
+        path to be taken is low. (N.B. It does
+        seem than iOS 13.4 has made some change
+        to the logic, causing this happiest path
+        to be hit more often.)
+      end note
+    else Less Happy Path
+      Browser -> Back : Load paymentUrl
+      Browser <- Back : 301 Moved Permanently\nhttps://trampoline.page.host/trampoline/page/path?target=paymentUrl%26fallback=true
+      Browser -> Trampoline : Load trampoline page
+      User <- Browser : Show trampoline page
+      note right
+        The "Trampoline Page" has a button, which
+        links back to paymentUrl, but with an
+        additional query parameter (actually this
+        extra parameter is added by the backend
+        when generating the redirect to the
+        trampoline page). Importantly, the
+        Trampoline is on a different domain than
+        paymentUrl, as Universal Links are only
+        forwarded to the app if they are opened
+        from a different domain than the link's domain.
+      end note
+      User -> Browser : Press "Return to App" button\nNavigate to paymentUrl&fallback=true
+      alt Less Happy Path (contd.)
+        Browser <-> System : Recognize that paymentUrl&fallback=true is a Universal Link for App
+        Browser -> System : Launch app with paymentUrl&fallback=true
+      else Sad Path
+        note right
+          All cases should be caught by one of
+          these two flows. However, Universal
+          Links remain finicky, and therefore it
+          is good to provide one final fallback.
+        end note
+        Browser -> Back : Load paymentUrl&fallback=true
+        Browser <- Back : 301 Moved Permanently\ncustomscheme://[paymentUrl-without-scheme]&fallback=true
+        note right : customscheme is a URL scheme unique to the App
+        User <- Browser : Show confirmation dialog
+        User -> Browser : Accept app launch
+        Browser -> System : Launch app with customscheme://[paymentUrl-without-scheme]&fallback=true
+      end
+    end
+    System -> App : UIApplicationDelegate.application(_:open:options:) or\nUIApplicationDelegate.application(_:continue:restorationHandler:)
+    App -> SDK : SwedbankPaySDK.open(url:) or\nSwedbankPaySDK.continue(userActivity:)
+    SDK -> SDK : Recognize paymentUrl or modified paymentUrl
+  end
+end
+
+@enduml
