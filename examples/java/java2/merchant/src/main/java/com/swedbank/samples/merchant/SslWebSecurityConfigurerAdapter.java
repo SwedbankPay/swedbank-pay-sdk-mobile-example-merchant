@@ -16,5 +16,6 @@ public class SslWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         if (baseUrl.startsWith("https://")) {
             http.requiresChannel().regexMatchers("^((?!/healthcheck).)*$").requiresSecure();
         }
+        http.authorizeRequests().anyRequest().permitAll().and().csrf().disable();
     }
 }
