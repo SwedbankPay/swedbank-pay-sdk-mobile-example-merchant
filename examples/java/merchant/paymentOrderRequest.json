@@ -1,0 +1,88 @@
+{
+    "paymentorder": {
+        "operation": "Purchase",
+        "currency": "SEK",
+        "amount": 1000,
+        "vatAmount": 250,
+        "description": "Test Purchase",
+        "userAgent": "Mozilla/5.0...",
+        "language": "sv-SE",
+        "generateRecurrenceToken": false,
+        "restrictedToInstruments": ["CreditCard", "Invoice"],
+        "urls": {
+            "hostUrls": [ "https://example.com", "https://example.net" ],
+            "completeUrl": "https://example.com/payment-completed",
+            "cancelUrl": "https://example.com/payment-canceled",
+            "paymentUrl": "https://example.com/perform-payment",
+            "callbackUrl": "https://api.example.com/payment-callback",
+            "termsOfServiceUrl": "https://example.com/termsandconditoons.pdf"
+        },
+        "payeeInfo": {
+            "payeeId": "e485f88c-e176-4af4-8da0-cdc3739fdb8a",
+            "payeeReference": "AB832",
+            "payeeName": "Merchant1",
+            "productCategory": "A123",
+            "orderReference": "or-123456",
+            "subsite": "MySubsite"
+        },
+        "payer": {
+            "consumerProfileRef": "",
+            "email": "olivia.nyhuus@payex.com",
+            "msisdn": "+4798765432",
+            "workPhoneNumber" : "+4787654321",
+            "homePhoneNumber" : "+4776543210"
+        },
+        "orderItems": [
+            {
+                "reference": "P1",
+                "name": "Product1",
+                "type": "PRODUCT",
+                "class": "ProductGroup1",
+                "itemUrl": "https://example.com/products/123",
+                "imageUrl": "https://example.com/product123.jpg",
+                "description": "Product 1 description",
+                "discountDescription": "Volume discount",
+                "quantity": 4,
+                "quantityUnit": "pcs",
+                "unitPrice": 300,
+                "discountPrice": 200,
+                "vatPercent": 2500,
+                "amount": 1000,
+                "vatAmount": 250
+            },
+            {
+                "reference": "I1",
+                "name": "InvoiceFee",
+                "type": "PAYMENT_FEE",
+                "class": "Fees",
+                "description": "Fee for paying with Invoice",
+                "quantity": 1,
+                "quantityUnit": "pcs",
+                "unitPrice": 1900,
+                "vatPercent": 0,
+                "amount": 1900,
+                "vatAmount": 0,
+                "restrictedToInstruments": [
+                    "Invoice-PayExFinancingSe", "Invoice-CampaignInvoiceSe"
+                ]
+            }
+        ],
+        "riskIndicator": {
+            "deliveryEmailAddress": "olivia.nyhuus@payex.com",
+            "deliveryTimeFrameIndicator": "01",
+            "preOrderDate": "19801231",
+            "preOrderPurchaseIndicator": "01",
+            "shipIndicator": "01",
+            "giftCardPurchase": false,
+            "reOrderPurchaseIndicator": "01",
+            "pickUpAddress": {
+                "name": "Olivia Nyhus",
+                "streetAddress": "Saltnestoppen 43",
+                "coAddress": "",
+                "city": "Saltnes",
+                "zipCode": "1642",
+                "countryCode": "NO"
+            }
+        }
+    }
+}
