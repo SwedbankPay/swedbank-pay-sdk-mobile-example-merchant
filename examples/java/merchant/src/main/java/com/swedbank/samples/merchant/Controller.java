@@ -1,14 +1,11 @@
 package com.swedbank.samples.merchant;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
-import org.apache.hc.core5.http.io.entity.EntityTemplate;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.HttpEntities;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
 
 @RestController
 public class Controller {
@@ -145,7 +139,6 @@ public class Controller {
         httpPost.setEntity(HttpEntities.create(postBody));
         CloseableHttpResponse payexResponse = httpClient.execute(httpPost);
         HttpEntity entity = payexResponse.getEntity();
-        //EntityUtils.consume(entity);
         return EntityUtils.toString(entity);
     }
 
