@@ -98,8 +98,7 @@ public class PaymentOrderRequest {
             }
 
             public String getPayeeReference() {
-                //return payeeReference;
-                return "AB" + Integer.toString((int) (Math.random() * ((999 - 100) + 1)) + 100);
+                return payeeReference;
             }
 
             public void setPayeeReference(String payeeReferece) {
