@@ -8,7 +8,9 @@ Prerequisites: Java 8 JDK or higher
 
 Zero-downtime blue-green deployment to AWS environment
 ------------------------------------------------------
-Prerequisites: Local AWS CLI setup and appropriately permissioned AWS user account
+Prerequisites:
+ - Local AWS CLI setup and appropriately permissioned AWS user account
+ - Set your merchant-specific details in src/main/resources/application.yml
 
 Build your deployment package:
 ```
@@ -46,8 +48,11 @@ Delete obsolete parallel service environment:
 
 Set up initial service fixture, to support deployment described above:
 ----------------------------------------------------------------------
-Prerequisites: Local AWS CLI setup and appropriately permissioned AWS user account
-
+Prerequisites:
+ - Local AWS CLI setup and appropriately permissioned AWS user account
+ - Supporting Route53 DNS and certificate setup reflected in infra/elb-fixture.yaml
+ - VPC reference reflected in infra/elb-fixture.yaml 
+ 
 ```
 [me@laptop merchant]$ aws cloudformation  create-stack \
     --stack-name merchant-fixture \
