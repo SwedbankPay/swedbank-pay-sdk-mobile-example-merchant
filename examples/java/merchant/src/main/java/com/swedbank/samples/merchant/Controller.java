@@ -30,7 +30,7 @@ public class Controller {
         return "{\n" +
                 "  \"consumers\": \"/consumers\",\n" +
                 "  \"paymentorders\": \"/paymentorders\"\n" +
-                "}";
+                "}\n";
     }
 
     @ExceptionHandler(WebClientResponseException.class)
