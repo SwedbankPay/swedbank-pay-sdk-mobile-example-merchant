@@ -13,8 +13,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./examples/java/merchant
+    defaults:
+      run:
+        working-directory: ./examples/java/merchant
 
     steps:
     - uses: actions/checkout@v2
