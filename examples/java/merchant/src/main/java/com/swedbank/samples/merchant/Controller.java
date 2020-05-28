@@ -51,14 +51,34 @@ public class Controller {
                 .setPayeeReference("AB" + Integer.toString((int) (Math.random() * ((999 - 100) + 1)) + 100));
         WebClient client = WebClient
                 .builder()
-                    .baseUrl(payexBaseUrl)
-                    .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + merchantToken)
+                .baseUrl(payexBaseUrl)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + merchantToken)
                 .build();
         PaymentOrderResponse payexResponse = client.post()
                 .uri("/psp/paymentorders")
                 .body(BodyInserters.fromObject(paymentOrderRequest))
                 .retrieve()
                 .bodyToMono(PaymentOrderResponse.class)
+                .block();
+        return payexResponse;
+    }
+
+    @RequestMapping(path = "/payments", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public PaymentResponse payment(@RequestBody PaymentRequest paymentRequest) {
+        paymentRequest
+                .getPayment()
+                .getPayeeInfo()
+                .setPayeeReference("AB" + Integer.toString((int) (Math.random() * ((999 - 100) + 1)) + 100));
+        WebClient client = WebClient
+                .builder()
+                .baseUrl(payexBaseUrl)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + merchantToken)
+                .build();
+        PaymentResponse payexResponse = client.post()
+                .uri("/psp/creditcard/payments")
+                .body(BodyInserters.fromObject(paymentRequest))
+                .retrieve()
+                .bodyToMono(PaymentResponse.class)
                 .block();
         return payexResponse;
     }

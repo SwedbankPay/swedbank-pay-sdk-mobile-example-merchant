@@ -5,7 +5,15 @@ import java.util.List;
 public class PaymentRequest {
     
     public Payment payment;
-    
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
     public static class Payment {
         private String operation;
         private String intent;
