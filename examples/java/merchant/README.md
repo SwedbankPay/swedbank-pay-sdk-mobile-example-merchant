@@ -10,6 +10,7 @@ Zero-downtime blue-green deployment to AWS environment
 ------------------------------------------------------
 Prerequisites:
  - Local AWS CLI setup and appropriately permissioned AWS user account
+ - Deployment fixture as detailed in section below
  - Set your merchant-specific details in src/main/resources/application.yml
 
 Build your deployment package:
