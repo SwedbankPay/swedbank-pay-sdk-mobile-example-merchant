@@ -1,0 +1,21 @@
+@startuml
+
+participant SDK
+participant "Merchant Backend" as Back
+participant "Swedbank Pay Backend" as SPBack
+participant WebView
+actor User
+
+opt Checkin
+  SDK -> Back : POST [consumers] { "operation": "initiate-consumer-session", ... }
+  Back -> SPBack : POST /psp/consumers/ { "operation": "initiate-consumer-session", ... }
+  Back <- SPBack : { "operations": [{ "rel": "view-consumer-identification", "href": "[consumer-script]" }] }
+  SDK <- Back : { "operations": [{ "rel": "view-consumer-identification", "href": "[consumer-script]" }] }
+  SDK -> WebView : <html>...<script src="[consumer-script]">...payex.hostedView.consumer(...)...</html>
+  WebView -> User : Show checkin UI
+  User -> WebView : Enter personal details
+  WebView -> SDK : onConsumerIdentified({ "consumerProfileRef" : "..." })
+  SDK -> SDK : paymentOrder.payer = { "consumerProfileRef" : "..." }
+end
+
+@enduml
