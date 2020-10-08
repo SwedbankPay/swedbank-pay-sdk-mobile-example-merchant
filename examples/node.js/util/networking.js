@@ -48,6 +48,10 @@ const request = async (method, path, body) => {
     const baseUrl = process.env.SWEDBANKPAY_SERVER_BASE_URL ||
         global.config.payexBaseUrl;
     const url = `${baseUrl}${path}`;
+    return await requestUrl(method, url, body);
+}
+
+async function requestUrl(method, url, body) {
     const opts = {
         method: method,
         compress: false,
@@ -94,13 +98,25 @@ module.exports.post = async (path, body) => {
 
 /**
  * Performs a HTTP GET request.
- * 
+ *
  * @param {string} path the path to the requested resource; eg /path
- * @returns {object} Promise whose then() gets a single parameter that is the 
+ * @returns {object} Promise whose then() gets a single parameter that is the
  * server response as a parsed object representing the JSON response content.
  */
 module.exports.get = async (path) => {
     return await request('get', path);
+};
+
+/**
+ * Performs a HTTP PATCH request.
+ *
+ * @param {string} path the path to the requested resource; eg /path
+ * @param {object} body the PATCH body as an object
+ * @returns {object} Promise whose then() gets a single parameter that is the
+ * server response as a parsed object representing the JSON response content.
+ */
+module.exports.patchUrl = async (url, body) => {
+    return await requestUrl('patch', url, body);
 };
 
 /**

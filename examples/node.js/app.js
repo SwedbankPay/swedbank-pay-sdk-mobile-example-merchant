@@ -25,6 +25,7 @@ const index = require('./routes/index.js');
 const consumers = require('./routes/consumers.js');
 const paymentorders = require('./routes/paymentorders.js');
 const paymentorder = require('./routes/paymentorder.js');
+const setInstrument = require('./routes/set-instrument.js');
 const appleAssoc = require('./routes/apple-app-site-association.js');
 const assetLinks = require('./routes/assetlinks.js');
 const callbackReload = require('./routes/sdk-callback-reload.js');
@@ -37,6 +38,8 @@ app.post('/consumers', celebrate({ body: consumers.schema }),
   consumers.route);
 app.post('/paymentorders', celebrate({ body: paymentorders.schema }),
   paymentorders.route);
+app.patch('/paymentorders/:id/setInstrument', celebrate({ body: setInstrument.schema }),
+  setInstrument.route);
 app.get(constants.appleAppSiteAssociationPath, appleAssoc.route);
 app.get(constants.assetLinksPath, assetLinks.route);
 app.get(constants.sdkCallbackReloadPath, celebrate({ query: callbackReload.schema }),
