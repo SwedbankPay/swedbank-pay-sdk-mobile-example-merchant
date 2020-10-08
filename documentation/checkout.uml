@@ -1,0 +1,21 @@
+@startuml
+
+participant SDK
+participant "Merchant Backend" as Back
+participant "Swedbank Pay Backend" as SPBack
+participant WebView
+actor User
+
+group Begin Checkout
+  SDK -> Back : POST [paymentorders] { paymentorder: {...} }
+  Back -> Back : Preprocess payment order (e.g. create payeeReference)
+  Back -> SPBack : POST /psp/paymentorders/ { paymentorder: {...} }
+  SPBack <- Back : { "id": "...", "operations": [{ "rel": "view-paymentorder", "href": "[paymentorder-script]" }], ... }
+  Back -> Back : Postprocess payment order (e.g. store id)
+  SDK <- Back : { "id": "...", "operations": [{ "rel": "view-paymentorder", "href": "[paymentorder-script]" }], ... }
+  SDK -> WebView : <html>...<script src="[paymentorder-script]">...payex.hostedView.paymentMenu(...)...</html>
+  WebView -> User : Show checkout UI
+  User -> WebView : Choose payment method and enter details
+end
+
+@enduml

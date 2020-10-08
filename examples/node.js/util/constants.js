@@ -18,6 +18,9 @@ const problemUnauthorized = 'https://api.payex.com/psp/errordetail/mobilesdk/una
 // Problem type for bogus requests from client
 const problemBadRequest = 'https://api.payex.com/psp/errordetail/mobilesdk/badrequest';
 
+// Problem type for requests for a nonexistent resource
+const problemNotFound = 'https://api.payex.com/psp/errordetail/notfound'
+
 const appleAppSiteAssociationPath = '/.well-known/apple-app-site-association';
 
 const assetLinksPath = '/.well-known/assetlinks.json';
@@ -26,14 +29,18 @@ const sdkCallbackReloadPath = '/sdk-callback/reload';
 const androidIntentCallbackPath = '/sdk-callback/android-intent';
 const iosUniversalLinkCallbackPath = '/sdk-callback/ios-universal-link';
 
+const opSetInstrument = 'update-paymentorder-setinstrument';
+
 module.exports.apiKeyHeaderName = apiKeyHeaderName;
 module.exports.accessTokenHeaderName = accessTokenHeaderName;
 module.exports.problemGatewayTimeout = problemGatewayTimeout;
 module.exports.problemBadGateway = problemBadGateway;
 module.exports.problemUnauthorized = problemUnauthorized;
 module.exports.problemBadRequest = problemBadRequest;
+module.exports.problemNotFound = problemNotFound;
 module.exports.appleAppSiteAssociationPath = appleAppSiteAssociationPath;
 module.exports.assetLinksPath = assetLinksPath;
 module.exports.sdkCallbackReloadPath = sdkCallbackReloadPath;
 module.exports.androidIntentCallbackPath = androidIntentCallbackPath;
 module.exports.iosUniversalLinkCallbackPath = iosUniversalLinkCallbackPath;
+module.exports.opSetInstrument = opSetInstrument;

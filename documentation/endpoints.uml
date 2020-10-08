@@ -1,0 +1,11 @@
+@startuml
+
+participant SDK
+participant "Merchant Backend" as Back
+
+group cacheable
+  SDK -> Back : GET /
+  SDK <- Back : { "consumers": "[consumers]", "paymentorders": "[paymentorders]" }
+end
+
+@enduml

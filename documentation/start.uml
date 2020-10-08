@@ -1,0 +1,35 @@
+@startuml
+
+actor User
+participant App
+participant SDK
+
+group Start Payment
+  User -> App : Begin payment
+  group Build Payment Order
+    alt Android
+      App <-> SDK : PaymentOrder(...) or PaymentOrder.Builder()...build()
+    else iOS
+      App <-> SDK : SwedbankPaySDK.PaymentOrder.init(...)
+    end
+  end
+  opt Build Consumer
+    alt Android
+      App <-> SDK : Consumer(...)
+    else iOS
+      App <-> SDK : Consumer.init(...)
+    end
+  end
+  group Create and configure payment UI component
+    alt Android
+      App <-> SDK : PaymentFragment()
+      App <-> SDK : PaymentFragment.ArgumentsBuilder()...build()
+      App -> SDK : activity.paymentViewModel.[rich]state.observe(...)
+    else iOS
+      App <-> SDK : SwedbankPaySDKController.init(...)
+      App -> SDK : swedbankPaySDKController.delegate = ...
+  end
+  App -> App : Show payment UI component
+end
+
+@enduml

@@ -1,0 +1,63 @@
+@startuml
+
+participant App
+participant SDK
+participant WebView
+participant System
+participant Browser
+participant "External App" as Ext
+actor User
+
+opt 3-D Secure Et Al.
+  SDK <- WebView: Navigate to another page
+  alt Navigation is to a regular http(s) URL
+    SDK -> SDK : Check web view compatibility
+    alt Compatible with Web Wiew
+      SDK -> WebView : Proceed with navigation normally
+      note right
+        The same check is repeated for any 
+        further navigation inside the WebView
+      end note
+      SDK <- WebView: Navigate to paymentUrl
+      note right
+        All properly configured authentication
+        flows must end up here
+      end note
+      SDK -> SDK : Recognize paymentUrl
+      SDK -> WebView : Cancel navigation
+    else Not Compatible with Web Wiew
+      SDK -> WebView : Cancel navigation
+      SDK -> System : Open URL
+      System -> Browser : Open URL in Browser
+      User <-> Browser : Handle external flow
+      Browser -> Browser : Open paymentUrl in Browser
+    end
+  else Navigation is to an app-specific URL (custom scheme, Android Deep Link/App Link, iOS Universal Link)
+    SDK -> WebView : Cancel navigation
+    SDK -> System : Open URL
+    System -> Ext : Launch URL-appropriate app
+    User <-> Ext : Handle external flow
+    Ext -> System : Open paymentUrl
+    alt Android
+      System -> Browser : Open paymentUrl in Browser
+      note left
+        On Android, paymentUrl is an https URL that redirects to an Android Intent URL.
+      end note
+    else iOS
+      System -> App : Launch app with paymentUrl
+      note right
+        On iOS, paymentUrl is a Universal Link.
+        When an app open a Universal Link to
+        another app, it should be routed to that
+        app instead of the Browser. However,
+        Univeral Links are finicky things, and
+        it is not impossible that it gets opened
+        in the Browser instead. In that case,
+        the flow continues with "paymentUrl
+        opened in Browser" below instead.
+      end note
+    end
+  end
+end
+
+@enduml

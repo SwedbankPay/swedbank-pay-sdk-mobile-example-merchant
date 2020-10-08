@@ -1,0 +1,99 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Fixture supporting blue-green deployment
+
+Resources:
+  ELBSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ELB Security Group
+      VpcId: vpc-de29c2a7
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: "-1"
+          ToPort: "-1"
+          IpProtocol: "-1"
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 80
+          ToPort: 80
+          IpProtocol: tcp
+        - CidrIp: 0.0.0.0/0
+          FromPort: 443
+          ToPort: 443
+          IpProtocol: tcp
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      Tags: [{"Key": "Name", "Value": {"Fn::Join": [" ",[{"Ref": "AWS::StackName"}, "resource"]]}}]
+      SecurityGroups:
+        - !Ref ELBSecGroup
+      CrossZone: True
+      Scheme: internet-facing
+      AvailabilityZones:
+        - eu-west-1a
+        - eu-west-1b
+        - eu-west-1c
+      HealthCheck:
+        HealthyThreshold: 2
+        Interval: 5
+        Target: HTTP:8080/healthcheck
+        Timeout: 4
+        UnhealthyThreshold: 2
+      Listeners:
+        - LoadBalancerPort: 80
+          InstancePort: 8080
+          Protocol: HTTP
+          InstanceProtocol: HTTP
+        - LoadBalancerPort: 443
+          InstancePort: 8080
+          Protocol: HTTPS
+          InstanceProtocol: HTTP
+          SSLCertificateId: 'arn:aws:acm:eu-west-1:746228867376:certificate/52a1221c-9824-4348-8a08-fb470ab7522c'
+  DNS:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: jbe.red.
+      RecordSets:
+        - Name: jbe.red.
+          Type: A
+          AliasTarget:
+            HostedZoneId: !GetAtt 'LoadBalancer.CanonicalHostedZoneNameID'
+            DNSName: !GetAtt 'LoadBalancer.DNSName'
+  JarBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      Tags: [{"Key": "Name", "Value": {"Fn::Join": [" ",[{"Ref": "AWS::StackName"}, "resource"]]}}]
+  BucketReadingRole:
+    Type: AWS::IAM::Role
+    DependsOn: "JarBucket"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: BucketReader
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:List*"
+                  - "s3:Get*"
+                  - "s3:HeadBucket"
+                Resource: "*"
+  S3ReadingInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref BucketReadingRole

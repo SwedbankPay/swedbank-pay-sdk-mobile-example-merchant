@@ -4,10 +4,10 @@
 
 ## About
 
-**IMPORTANT**: This backend implementation is at an early stage and not yet used in production.
-We do not offer support for this version, but will release supported versions
-in the future. Feel free to play around, but for full functionality and support,
-please wait for the supported, stable release.
+**UNSUPPORTED**: This backend implementation is at an early stage of development and is not
+supported as of yet by Swedbank Pay. It is provided as a convenience to speed
+up your development, so please feel free to play around. However, if you need
+support, please wait for a future, stable release.
 
 This repository holds information about how to implement a Merchant Backend application to act as an endpoint between a merchant's mobile application and the Swedbank Pay APIs. 
 
@@ -77,4 +77,4 @@ See the subdirectory `examples/` for implementation examples in some popular pro
 
 [opengraph-image]: https://repository-images.githubusercontent.com/209760624/7b57e800-53eb-11ea-87c8-9ac9ad4a8074
 [developer]: https://developer.swedbankpay.com/
-[openapi]: https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/SwedbankPaysdk_openapi.yaml
+[openapi]: https://editor.swagger.io/?url=https://raw.githubusercontent.com/SwedbankPay/swedbank-pay-sdk-mobile-example-merchant/master/documentation/swedbankpaysdk_openapi.yaml
