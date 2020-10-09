@@ -40,7 +40,6 @@ module.exports.route = async (req, res) => {
             }
         };
         const swedbankPayResponse = await patchUrl(endpoint, body);
-        console.log(`Payex response ${swedbankPayResponse}.`);
         res.status(200).send(swedbankPayResponse).end();
     } catch (e) {
         console.log('Failed to set paymentorder instrument');

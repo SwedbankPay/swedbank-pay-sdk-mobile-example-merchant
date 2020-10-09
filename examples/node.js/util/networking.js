@@ -14,8 +14,8 @@ const problems = require('./problems.js');
  */
 const getJsonOrThrowProblem = async (response) => {
     const contentType = contentTypeParser(response.headers.get('Content-Type'));
-    const type = contentType.type;
-    const subtype = contentType.subtype;
+    const type = contentType ? contentType.type : null;
+    const subtype = contentType ? contentType.subtype : null;
     const isJson = type == 'application' && (subtype == 'json' || subtype.endsWith('+json'));
     if (isJson) {
         const body = await response.json();
