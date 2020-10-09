@@ -2,6 +2,9 @@
 
 const { Joi } = require('celebrate');
 const { post, sendError } = require('../util/networking.js');
+const constants = require('../util/constants.js');
+const findOperation = require('../util/find-operation.js');
+
 
 /**
  * Validation schema for paymentorder.
@@ -25,8 +28,10 @@ const paymentOrderSchema = Joi.object().keys({
         .required(),
     language: Joi.string()
         .required(),
+    instrument: Joi.string(),
     generateRecurrenceToken: Joi.boolean()
         .required(),
+    generatePaymentToken: Joi.boolean(),
     restrictedToInstruments: Joi.array().items(Joi.string()),
     urls: Joi.object({
         hostUrls: Joi.array().items(Joi.string())
@@ -201,13 +206,26 @@ module.exports.route = (req, res) => {
 
     post('/psp/paymentorders/', req.body)
         .then(pspResponse => {
+            // payeeReference is our paymentId,
+            // as set in preparePaymentOrder
+            const paymentId = paymentOrder.payeeInfo.payeeReference;
+
             // Store the Swedbank Pay id (url) for this payment order
-            // for capture, etc. Note that this example does not really
+            // for further operations.
+            // capture, etc. Note that this example does not really
             // use the stored id for anything, but a real application
             // would need it.
             global.database.insertPurchaseIdMapping(
-                paymentOrder.payeeInfo.payeeReference,
+                paymentId,
                 pspResponse.paymentOrder.id);
+
+            // If the payment order allows setting the payment instrument,
+            // we must expose this capability to the client.
+            const setInstrumentOp = findOperation(pspResponse, constants.opSetInstrument);
+            if (setInstrumentOp) {
+                const setInstrumentUrl = `/paymentorders/${paymentId}/setInstrument`;
+                pspResponse.mobileSDK = { setInstrument: setInstrumentUrl };
+            }
 
             res.status(200).send(pspResponse).end();
         })

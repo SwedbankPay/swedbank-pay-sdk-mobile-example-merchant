@@ -1,0 +1,11 @@
+base-url: 'http://localhost:8080'
+api-key: 'not set'
+payex-base-url: 'https://api.externalintegration.payex.com'
+merchant-token: 'not set'
+merchant-id: 'not set'
+---
+spring.profiles: prod
+base-url: 'https://jbe.red'
+server.tomcat.remote-ip-header: 'x-forwarded-for'
+server.tomcat.protocol-header: 'x-forwarded-proto'
+

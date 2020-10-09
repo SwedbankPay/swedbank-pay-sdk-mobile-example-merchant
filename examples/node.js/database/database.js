@@ -12,8 +12,8 @@ module.exports = class Database {
     }
 
     /**
-     * Inserts a new purchase into the database. 
-     * 
+     * Inserts a new purchase into the database.
+     *
      * @param purchase {object} the purchase data
      * @returns {number} ID allocated for the new purchase
      */
@@ -28,7 +28,7 @@ module.exports = class Database {
 
     /**
      * Inserts a mapping between our purchase id and PSP purchase id.
-     * 
+     *
      * @param purchaseId {number} our purchase id
      * @param pspPurchaseId {string} PSP purchase id
      */
@@ -38,11 +38,15 @@ module.exports = class Database {
 
     /**
      * Returns a purchase order by its purchase Id.
-     * 
+     *
      * @param purchaseId {number} purchase ID by which to find the purchase order
      * @returns {object} the purchase order, or undefined if not found
      */
     findPurchase(purchaseId) {
         return this.db[purchaseId];
+    }
+
+    findPspPurchaseId(purchaseId) {
+        return this.db[purchaseId].pspPurchaseId;
     }
 };

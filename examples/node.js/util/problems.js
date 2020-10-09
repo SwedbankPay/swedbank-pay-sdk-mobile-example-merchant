@@ -76,6 +76,20 @@ function makeUnauthorizedProblem(message) {
 }
 
 /**
+ * Creates a problem-json Document representing a not-found error.
+ * @param {string} message an optional message to add to the problem
+ * @returns a problem-json Document representing the error
+ */
+function makeNotFoundProblem(message) {
+    return new problemJson.Document({
+        type: constants.problemNotFound,
+        title: 'Not Found',
+        status: 404,
+        detail: message
+    });
+}
+
+/**
  * Creates a problem-json Document representing a node-fetch FetchError
  * @param {object} fetchError a FetchError thrown from node-fetch
  * @returns {object} a problem-json Document representing that error
