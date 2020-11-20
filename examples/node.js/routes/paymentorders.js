@@ -32,6 +32,7 @@ const paymentOrderSchema = Joi.object().keys({
     generateRecurrenceToken: Joi.boolean()
         .required(),
     generatePaymentToken: Joi.boolean(),
+    disableStoredPaymentDetails: Joi.boolean(),
     restrictedToInstruments: Joi.array().items(Joi.string()),
     urls: Joi.object({
         hostUrls: Joi.array().items(Joi.string())
@@ -63,7 +64,8 @@ const paymentOrderSchema = Joi.object().keys({
     payer: Joi.object({
         consumerProfileRef: Joi.string(),
         email: Joi.string(),
-        msisdn: Joi.string()
+        msisdn: Joi.string(),
+        payerReference: Joi.string(),
     }),
     orderItems: Joi.array().items(Joi.object({
         reference: Joi.string()
