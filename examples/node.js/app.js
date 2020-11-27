@@ -31,6 +31,7 @@ const assetLinks = require('./routes/assetlinks.js');
 const callbackReload = require('./routes/sdk-callback-reload.js');
 const androidIntentCallback = require('./routes/android-intent-callback.js');
 const iosUniversalLinkCallback = require('./routes/ios-universal-link-callback.js');
+const payerTokens = require('./routes/payer-tokens.js');
 
 // Specify our routes
 app.get('/', index.route);
@@ -40,6 +41,7 @@ app.post('/paymentorders', celebrate({ body: paymentorders.schema }),
   paymentorders.route);
 app.patch('/paymentorders/:id/setInstrument', celebrate({ body: setInstrument.schema }),
   setInstrument.route);
+app.get('/payers/:ref/paymentTokens', payerTokens.route);
 app.get(constants.appleAppSiteAssociationPath, appleAssoc.route);
 app.get(constants.assetLinksPath, assetLinks.route);
 app.get(constants.sdkCallbackReloadPath, celebrate({ query: callbackReload.schema }),
