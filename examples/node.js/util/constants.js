@@ -23,8 +23,6 @@ const problemNotFound = 'https://api.payex.com/psp/errordetail/notfound'
 
 const appleAppSiteAssociationPath = '/.well-known/apple-app-site-association';
 
-const assetLinksPath = '/.well-known/assetlinks.json';
-
 const sdkCallbackReloadPath = '/sdk-callback/reload';
 const androidIntentCallbackPath = '/sdk-callback/android-intent';
 const iosUniversalLinkCallbackPath = '/sdk-callback/ios-universal-link';
@@ -39,7 +37,6 @@ module.exports.problemUnauthorized = problemUnauthorized;
 module.exports.problemBadRequest = problemBadRequest;
 module.exports.problemNotFound = problemNotFound;
 module.exports.appleAppSiteAssociationPath = appleAppSiteAssociationPath;
-module.exports.assetLinksPath = assetLinksPath;
 module.exports.sdkCallbackReloadPath = sdkCallbackReloadPath;
 module.exports.androidIntentCallbackPath = androidIntentCallbackPath;
 module.exports.iosUniversalLinkCallbackPath = iosUniversalLinkCallbackPath;

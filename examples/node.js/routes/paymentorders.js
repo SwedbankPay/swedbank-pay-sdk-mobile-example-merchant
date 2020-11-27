@@ -146,7 +146,6 @@ const paymentOrderSchema = Joi.object().keys({
         })
     }),
     disablePaymentMenu: Joi.boolean(),
-    recurrenceToken: Joi.string(),
     paymentToken: Joi.string()
 });
 
