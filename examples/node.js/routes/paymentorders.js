@@ -4,6 +4,7 @@ const { Joi } = require('celebrate');
 const { post, sendError } = require('../util/networking.js');
 const constants = require('../util/constants.js');
 const findOperation = require('../util/find-operation.js');
+const { makeUnauthorizedProblem } = require('../util/problems.js');
 
 
 /**
@@ -144,7 +145,8 @@ const paymentOrderSchema = Joi.object().keys({
                 .allow('')
         })
     }),
-    disablePaymentMenu: Joi.boolean()
+    disablePaymentMenu: Joi.boolean(),
+    paymentToken: Joi.string()
 });
 
 /**
@@ -153,6 +155,24 @@ const paymentOrderSchema = Joi.object().keys({
 module.exports.schema = Joi.object().keys({
     paymentorder: paymentOrderSchema.required()
 });
+
+function checkPaymentToken(req, paymentToken) {
+    // To allow, add "allowUsePaymentToken": true to appconfig.json
+    // A real implementation must do access control to only
+    // allow a user to use their own tokens.
+    if (!global.config.allowUsePaymentToken) {
+        throw makeUnauthorizedProblem();
+    }
+}
+
+function checkPaymentOrder(req, paymentOrder) {
+    // To allow, add "allowGetPayerTokens": true to appconfig.json
+    // A real implementation must do access control to only
+    // allow a user to access their own tokens.
+    if (paymentOrder.paymentToken) {
+        checkPaymentToken(req, paymentOrder.paymentToken);
+    }
+}
 
 
 /**
@@ -181,6 +201,14 @@ function preparePaymentOrder(paymentOrder) {
  */
 module.exports.route = (req, res) => {
     const paymentOrder = req.body.paymentorder;
+
+    try {
+        checkPaymentOrder(req, paymentOrder);
+    } catch (e) {
+        sendError(res, e);
+        return;
+    }
+
     preparePaymentOrder(paymentOrder);
 
     post('/psp/paymentorders/', req.body)
