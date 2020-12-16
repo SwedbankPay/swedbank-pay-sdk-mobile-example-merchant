@@ -146,7 +146,8 @@ const paymentOrderSchema = Joi.object().keys({
         })
     }),
     disablePaymentMenu: Joi.boolean(),
-    paymentToken: Joi.string()
+    paymentToken: Joi.string(),
+    initiatingSystemUserAgent: Joi.string()
 });
 
 /**
