@@ -1,7 +1,7 @@
 openapi: '3.0.2'
 info:
   title: PayEx Mobile Backend
-  version: '1.0-beta03'
+  version: '1.0-beta04'
 components:
   schemas:
     TopLevelResources:
@@ -137,29 +137,29 @@ components:
                   type: array
                   items:
                     type: string
-                    example: https://your.merchant.backend/
+                    example: https://example.com/
                 completeUrl: 
                   description: The URL that the payment menu will redirect to when the payment is complete
                   type: string
-                  example: https://your.merchant.backend/complete
+                  example: https://example.com/complete
                 cancelUrl: 
                   description: The URL that the payment menu will redirect to when the payment is cancelUrl
                   type: string
-                  example: https://your.merchant.backend/cancel
+                  example: https://example.com/cancel
                 paymentUrl:
                   description: |
                     The URL that the payment process will redirect to when the payment menu needs to be reloaded
 
                   type: string
-                  example: https://your.merchant.backend/sdk-callback/android-intent?package=your.ecom.app&id=app-payment-id
+                  example: https://example.com/sdk-callback/android-intent?package=your.ecom.app&id=app-payment-id
                 callbackUrl:
                   description: The URL where Swedbank Pay will make POST requests when the state of the payment order changes.
                   type: string
-                  example: https://your.mechant.backend/server-callback
+                  example: https://example.com/server-callback
                 termsOfServiceUrl:
                   description: The URL that will be opened when the user needs to be shown your Terms of Service. Must be a https URL.
                   type: string
-                  example: https://your.ecom.site/terms-of-service
+                  example: https://example.com/terms-of-service
             payeeInfo:
               description: Object containing information about the payee
               type: object
@@ -374,10 +374,10 @@ components:
           generateRecurrenceToken: false
           urls:
             hostUrls:
-              - https://your.merchant.backend/
-            completeUrl: https://your.merchant.backend/complete
-            cancelUrl: https://your.merchant.backend/cancel
-            paymentUrl: https://your.merchant.backend/sdk-callback/android-intent?package=your.ecom.app&id=abcdef
+              - https://example.com/
+            completeUrl: https://example.com/complete
+            cancelUrl: https://example.com/cancel
+            paymentUrl: https://example.com/sdk-callback/android-intent?package=your.ecom.app&id=abcdef
           payeeInfo:
             payeeId: merchant-token
             payeeReference: order-id
@@ -416,6 +416,45 @@ components:
             method: GET
             contentType: application/javascript
             href: https://ecom.externalintegration.payex.com/paymentmenu/core/scripts/client/px.paymentmenu.client.js?token=5300a73308c9bf5ef02ffa5283069a36f37cf4f07a0e109e9e623f92bf3947dd&culture=sv-SE
+
+    PayerOwnedPaymentTokens:
+      type: object
+      properties:
+        payerOwnedPaymentTokens:
+          description: A collection of payment tokens owned by the payer identified by `payerReference`.
+          type: object
+          properties:
+            id:
+              description: The `id` (url) of the Swedbank Pay resource
+              type: string
+            payerReference:
+              description: The `payerReference` associated with these tokens
+              type: string
+            paymentTokens:
+              description: The list of tokens and associated information
+              type: array
+              items:
+                type: object
+                properties:
+                  paymentToken:
+                    description: The payment token
+                    type: string
+                  instrument:
+                    description: Payment instrument type of this token
+                    type: string
+                    example: CreditCard
+                  instrumentDisplayName:
+                    description: User-friendly name of the payment instrument
+                    type: string
+                    example: '411111******1111'
+                  instrumentParameters:
+                    description: Instrument-specific parameters.
+                    type: object
+                  operations:
+                    description: The `operations` array from the [Swedbank Pay API](https://developer.swedbankpay.com/checkout/other-features#operations).
+                    type: array
+                    items:
+                      type: object
 
 paths:
   /:
@@ -566,6 +605,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentOrder'
+                
+  /payers/{payerReference}/paymentTokens:
+    get:
+      parameters:
+        - name: payerReference
+          in: path
+          description: The `payerReference` whose tokens to retrieve
+          required: true
+          schema:
+            type: string
+      summary: Retrieves all payment tokens owned by a payer
+      description: >
+        This endpoint is optional. The mobile SDK contains a utility method
+        that makes a request to this endpoint. If you do not use it in your
+        application, then you have no need for this endpoint.
+      
+        Production implementations must have access control to ensure that a 
+        user can only access their own tokens.
+        
+        The example implementation makes a call to the Swedbank Pay API and
+        returns the response as-is. Your implementation may also retrieve the
+        tokens from your own database.
+      responses:
+        '200':
+          description: Data successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayerOwnedPaymentTokens'
 
   /sdk-callback/android-intent:
     get:
@@ -589,29 +657,40 @@ paths:
         Using this endpoint to form the paymentUrl enables you to do this.
 
 
-        This endpoint always returns a redirect response, where the url to redirect to
-        is an [Android intent url](https://developer.chrome.com/multidevice/android/intents),
+        This endpoint always returns a html document, which attempts to immediately redirect to
+        an [Android intent url](https://developer.chrome.com/multidevice/android/intents),
         where the package of the intent is set to the package given in the package parameter,
         the action to `com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER`, and the uri (data) of the
-        intent is the same as the url used to invoke this endpoint.
+        intent is the same as the url used to invoke this endpoint. The page also contains a link
+        to that same intent url for the user to tap, in case the redirect is blocked
+        (Chrome does this in some instances, and we cannot be sure of the behaviour of
+        third-party browsers.)
 
 
-        For example, if this endpoint is invoked at `https://your.merchant.backend/sdk-callback?package=your.ecom.app&id=abcdef`,
-        then the redirect will result in an intent with `package = your.ecom.app`,
+        For example, if this endpoint is invoked at 
+        `https://example.com/sdk-callback/android-intent?package=your.ecom.app&id=abcdef`,
+        then the navigation to the intent url will result in an intent with `package = your.ecom.app`,
         `action = com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER`, and
-        `data = https://your.merchant.backend/sdk-callback?package=your.ecom.app&id=abcdef`.
+        `data = https://example.com/sdk-callback/android-intent?package=your.ecom.app&id=abcdef`.
         This enables navigation to this url to be routed to the app even if it is opened
         in a browser, and requires no further configuration of the app using the SDK.
       responses:
-        '301':
+        '200':
           description: >
-            Redirect to an intent url that starts an activity with the same url as was used to invoke this.
-          headers:
-            Location:
-              description: The generated intent url 
-              schema:
-                type: string
-                example: intent://your.merchant.backend/sdk-callback?package=your.ecom.app&id=abcdef#Intent;scheme=https;action=com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER;package=your.ecom.app;end;
+            An html document that navigates to an intent url that starts
+            an activity with the same url as was used to invoke this.
+          content:
+            text/html:
+              example: |
+                <html>
+                <head>
+                  <title>Swedbank Pay Payment</title>
+                  <meta http-equiv="refresh" content="0;url=$intent://example.com/sdk-callback/android-intent?package=your.ecom.app&id=abcdef#Intent;scheme=https;action=com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER;package=your.ecom.app;end;">
+                </head>
+                <body>
+                  <p><a href="intent://example.com/sdk-callback/android-intent?package=your.ecom.app&id=abcdef#Intent;scheme=https;action=com.swedbankpay.mobilesdk.VIEW_PAYMENTORDER;package=your.ecom.app;end;">Back to app</a></p>
+                </body>
+                </html>
 
   /sdk-callback/ios-universal-link:
     get:
@@ -659,7 +738,8 @@ paths:
 
 
         Like the Android equivalent, this endpoint always returns a redirect response.
-        On iOS, the preferred way of routing a url to an app is to use [Universal Links](https://developer.apple.com/ios/universal-links/).
+        On iOS, the preferred way of routing a url to an app is to use 
+        [Universal Links](https://developer.apple.com/ios/universal-links/).
         The domain of the paymentUrl, i.e. the domain of the merchant backend, should
         be added as an "applinks" associated domain to the app (of course, this requires
         the appropriate /.well-known/apple-app-site-association file to be served;
@@ -681,24 +761,24 @@ paths:
 
         Note that for the above contraption to work correctly, the trampoline page must be hosted
         on a different domain, as Universal Links will only be followed if the navigation starts
-        from a different domain. For this purpose, Swedbank Pay hosts a generic trampoline page
-        at `https://[url TBD]?target=<paymentUrl-with-fallback=true>&language=<language-code>&app=<app-name>`.
+        from a different domain. For this purpose, Swedbank Pay hosts a generic trampoline page at
+        `https://ecom.stage.payex.com/externalresourcehost/trampoline?target=<paymentUrl-with-fallback=true>&language=<language-code>&app=<app-name>`.
         The example backend uses this as the trampoline page.
 
 
         To illustrate, here is a "full" flow:
 
-        1.  Navigate to `https://your.merchant.backend/sdk-callback/ios-universal-link?scheme=yourecomapp&language=en-US&id=abcdef&app=Your%20eCom%20App`.
+        1.  Navigate to `https://example.com/sdk-callback/ios-universal-link?scheme=yourecomapp&language=en-US&id=abcdef&app=Your%20eCom%20App`.
             This is a Universal Link, and in some cases will immediately be routed to your app.
             If it is opened in Safari instead, we are redirected (HTTP 301) to:
-        2.  `https://[url TBD]?target=https%3A%2F%2Fyour.merchant.backend%2Fsdk-callback%2Fios-universal-link%3Fscheme%3Dyourecomapp%26language%3Den-US%26id%3Dabcdef%26app%3DYour%2520eCom%2520App%26fallback%3Dtrue&language=en-US&app=Your%20eCom%20App`
+        2.  `https://ecom.stage.payex.com/externalresourcehost/trampoline?target=https%3A%2F%2Fexample.com%2Fsdk-callback%2Fios-universal-link%3Fscheme%3Dyourecomapp%26language%3Den-US%26id%3Dabcdef%26app%3DYour%2520eCom%2520App%26fallback%3Dtrue&language=en-US&app=Your%20eCom%20App`
             This is the trampoline page. It contains a single link (button), which navigates to:
-        3.  `https://your.merchant.backend/sdk-callback/ios-universal-link?scheme=yourecomapp&language=en-US&id=abcdef&app=Your%20eCom%20App&fallback=true`
+        3.  `https://example.com/sdk-callback/ios-universal-link?scheme=yourecomapp&language=en-US&id=abcdef&app=Your%20eCom%20App&fallback=true`
             This is again a Universal Link. This time the navigation started from a user interaction, 
             so unless there is a problem with your configuration, it will be routed to your app
             rather that opened in Safari. If, however, something goes wrong and the link is instead
             opened in Safari, we are redirected to:
-        4.  `yourecomapp://your.merchant.backend/sdk-callback/ios-universal-link?scheme=yourecomapp&language=en-US&id=abcdef&app=Your%20eCom%20App&fallback=true`
+        4.  `yourecomapp://example.com/sdk-callback/ios-universal-link?scheme=yourecomapp&language=en-US&id=abcdef&app=Your%20eCom%20App&fallback=true`
             This is a custom scheme link, so it will be routed to your app, but only after
             a confirmation dialog.
 
@@ -713,4 +793,4 @@ paths:
               description: The trampoline page or custom-scheme url
               schema:
                 type: string
-                example: https://[url TBD]?target=https%3A%2F%2Fyour.merchant.backend%2Fsdk-callback%2Fios-universal-link%3Fscheme%3Dyourecomapp%26language%3Den-US%26id%3Dabcdef%26app%3DYour%2520eCom%2520App%26fallback%3Dtrue&language=en-US&app=Your%20eCom%20App
+                example: https://ecom.stage.payex.com/externalresourcehost/trampoline?target=https%3A%2F%2Fexample.com%2Fsdk-callback%2Fios-universal-link%3Fscheme%3Dyourecomapp%26language%3Den-US%26id%3Dabcdef%26app%3DYour%2520eCom%2520App%26fallback%3Dtrue&language=en-US&app=Your%20eCom%20App
