@@ -2,6 +2,8 @@
 
 const { get, sendError } = require('../util/networking.js');
 const { makeUnauthorizedProblem } = require('../util/problems.js');
+const constants = require('../util/constants.js');
+const findOperation = require('../util/find-operation.js');
 
 async function authorize(req) {
     // To allow, add "allowGetPayerOwnedPaymentTokens": true to appconfig.json
@@ -16,8 +18,20 @@ module.exports.route = async (req, res) => {
     try {
         await authorize(req);
         const payerRef = req.params.ref;
-        const tokens = await get(`/psp/paymentorders/payerownedpaymenttokens/${payerRef}`);
-        res.status(200).send(tokens).end();
+        const response = await get(`/psp/paymentorders/payerownedpaymenttokens/${payerRef}`);
+        const ownedTokens = response ? response.payerOwnedPaymentTokens : null;
+        const tokens = ownedTokens ? ownedTokens.paymentTokens : null;
+        for (const tokenInfo of tokens) {
+            const token = tokenInfo.paymentToken;
+            if (token) {
+                // All the tokens should have this field,
+                // but we cannot form the delete url without it,
+                // so we have to check.
+                const deleteUrl = `/payers/${payerRef}/paymentTokens/${token}`;
+                tokenInfo.mobileSDK = { delete: deleteUrl };
+            }
+        }
+        res.status(200).send(response).end();
     } catch (e) {
         console.log('Failed to get payer owned tokens');
         console.log(e);

@@ -116,6 +116,7 @@ module.exports = {
     celebrateProblems,
     makeBadGatewayProblem,
     makeUnauthorizedProblem,
+    makeNotFoundProblem,
     sendProblem,
     wrapFetchError
 };
