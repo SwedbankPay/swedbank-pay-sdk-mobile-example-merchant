@@ -51,16 +51,16 @@ const paymentOrderSchema = Joi.object().keys({
             .required(),
         payeeReference: Joi.string()
             .allow('')
-            .length(30)
+            .max(30)
             .required(),
         payeeName: Joi.string().allow(''),
         productCategory: Joi.string().allow(''),
         orderReference: Joi.string()
             .allow('')
-            .length(50),
+            .max(50),
         subsite: Joi.string()
             .allow('')
-            .length(40)
+            .max(40)
     }).required(),
     payer: Joi.object({
         consumerProfileRef: Joi.string(),
