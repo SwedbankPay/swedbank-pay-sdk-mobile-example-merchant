@@ -1,7 +1,7 @@
 openapi: '3.0.2'
 info:
   title: PayEx Mobile Backend
-  version: '1.0-beta04'
+  version: '1.0.1'
 components:
   schemas:
     TopLevelResources:
