@@ -39,7 +39,7 @@ async function getEndpoint(payerRef, token) {
     const ownedTokens = response ? response.payerOwnedPaymentTokens : null;
     const tokens = ownedTokens ? ownedTokens.paymentTokens : null;
     const tokenInfo = findToken(tokens, token);
-    if (!tokenInfo) throw makeNotFoundProblem()
+    if (!tokenInfo) throw makeNotFoundProblem();
     const op = findOperation(tokenInfo, constants.opDeletePaymentToken);
     return op ? op.href : null;
 }
