@@ -2,8 +2,6 @@
 
 const { get, sendError } = require('../util/networking.js');
 const { makeUnauthorizedProblem } = require('../util/problems.js');
-const constants = require('../util/constants.js');
-const findOperation = require('../util/find-operation.js');
 
 async function authorize(req) {
     // To allow, add "allowGetPayerOwnedPaymentTokens": true to appconfig.json
