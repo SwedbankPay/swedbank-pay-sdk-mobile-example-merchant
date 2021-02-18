@@ -28,6 +28,7 @@ const androidIntentCallbackPath = '/sdk-callback/android-intent';
 const iosUniversalLinkCallbackPath = '/sdk-callback/ios-universal-link';
 
 const opSetInstrument = 'update-paymentorder-setinstrument';
+const opDeletePaymentToken = 'delete-paymenttokens';
 
 module.exports.apiKeyHeaderName = apiKeyHeaderName;
 module.exports.accessTokenHeaderName = accessTokenHeaderName;
@@ -41,3 +42,4 @@ module.exports.sdkCallbackReloadPath = sdkCallbackReloadPath;
 module.exports.androidIntentCallbackPath = androidIntentCallbackPath;
 module.exports.iosUniversalLinkCallbackPath = iosUniversalLinkCallbackPath;
 module.exports.opSetInstrument = opSetInstrument;
+module.exports.opDeletePaymentToken = opDeletePaymentToken;
