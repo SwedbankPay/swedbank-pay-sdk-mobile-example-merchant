@@ -27,8 +27,8 @@ jobs:
       run: chmod +x test-java.sh
     - name: Run Java integration test
       shell: bash
-        env:
-          - API_KEY: ${{ secrets.API_KEY }}
-          - MERCHANT_ID: ${{ secrets.MERCHANT_ID }}
-          - LARGE_SECRET_PASSPHRASE: ${{ secrets.MERCHANT_TOKEN }}
+      env:
+        - API_KEY: ${{ secrets.API_KEY }}
+        - MERCHANT_ID: ${{ secrets.MERCHANT_ID }}
+        - LARGE_SECRET_PASSPHRASE: ${{ secrets.MERCHANT_TOKEN }}
       run: ./test-java.sh
