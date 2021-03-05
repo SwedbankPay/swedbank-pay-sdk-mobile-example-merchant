@@ -26,8 +26,9 @@ jobs:
     - name: Grant execute permission for testscript
       run: chmod +x test-java.sh
     - name: Run Java integration test
-      run: ./test-java.sh
+      shell: bash
         env:
-          API_KEY: ${{ secrets.API_KEY }}
-          MERCHANT_ID: ${{ secrets.MERCHANT_ID }}
-          LARGE_SECRET_PASSPHRASE: ${{ secrets.MERCHANT_TOKEN }}
+          - API_KEY: ${{ secrets.API_KEY }}
+          - MERCHANT_ID: ${{ secrets.MERCHANT_ID }}
+          - LARGE_SECRET_PASSPHRASE: ${{ secrets.MERCHANT_TOKEN }}
+      run: ./test-java.sh
