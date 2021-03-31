@@ -31,4 +31,4 @@ module.exports = function(config) {
             config[name] = parser(envValue);
         }
     }
-}
+};
