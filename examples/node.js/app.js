@@ -5,9 +5,12 @@ const app = express();
 const { celebrate } = require('celebrate');
 const { celebrateProblems } = require('./util/problems.js');
 const constants = require('./util/constants.js');
+const setConfigFromEnv = require('./util/env-config.js');
 
 // Read our global configuration from disk
 global.config = require('./appconfig.json');
+// Patch it from environment variables
+setConfigFromEnv(global.config);
 
 // Instantiate our Database
 const Database = require('./database/database.js');
