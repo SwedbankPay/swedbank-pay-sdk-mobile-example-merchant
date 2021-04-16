@@ -31,4 +31,4 @@ jobs:
         API_KEY: ${{ secrets.API_KEY }}
         MERCHANT_ID: ${{ secrets.MERCHANT_ID }}
         LARGE_SECRET_PASSPHRASE: ${{ secrets.MERCHANT_TOKEN }}
-      run: ./test-java.sh
+      run: ./test-backends.sh
