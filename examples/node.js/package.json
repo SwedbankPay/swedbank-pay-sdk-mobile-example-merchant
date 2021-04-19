@@ -11,7 +11,7 @@
     "celebrate": "^12.2.0",
     "content-type-parser": "^1.0.2",
     "express": "^4.17.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "problem-json": "^0.3.0"
   },
   "devDependencies": {},
