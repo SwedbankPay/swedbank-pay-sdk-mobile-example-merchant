@@ -8,6 +8,14 @@ module.exports.route = (req, res) => {
       paths: paths
     }
   });
+  details.unshift({
+    appIDs: global.config.iosAppIds,
+    components: [
+      {
+        '/': '/sdk-callback/*'
+      }
+    ]
+  });
   const payload = {
     applinks: {
       apps: [],
