@@ -5,9 +5,12 @@ const app = express();
 const { celebrate } = require('celebrate');
 const { celebrateProblems } = require('./util/problems.js');
 const constants = require('./util/constants.js');
+const setConfigFromEnv = require('./util/env-config.js');
 
 // Read our global configuration from disk
 global.config = require('./appconfig.json');
+// Patch it from environment variables
+setConfigFromEnv(global.config);
 
 // Instantiate our Database
 const Database = require('./database/database.js');
@@ -31,6 +34,7 @@ const callbackReload = require('./routes/sdk-callback-reload.js');
 const androidIntentCallback = require('./routes/android-intent-callback.js');
 const iosUniversalLinkCallback = require('./routes/ios-universal-link-callback.js');
 const payerTokens = require('./routes/payer-tokens.js');
+const patchPayerToken = require('./routes/patch-payer-token.js');
 
 // Specify our routes
 app.get('/', index.route);
@@ -41,6 +45,8 @@ app.post('/paymentorders', celebrate({ body: paymentorders.schema }),
 app.patch('/paymentorders/:id/setInstrument', celebrate({ body: setInstrument.schema }),
   setInstrument.route);
 app.get('/payers/:ref/paymentTokens', payerTokens.route);
+app.patch('/payers/:ref/paymentTokens/:token', celebrate({ body: patchPayerToken.schema }),
+  patchPayerToken.route);
 app.get(constants.appleAppSiteAssociationPath, appleAssoc.route);
 app.get(constants.sdkCallbackReloadPath, celebrate({ query: callbackReload.schema }),
   callbackReload.route);

@@ -1,13 +1,33 @@
 'use strict';
 
 module.exports.route = (req, res) => {
-  const paths = ["/sdk-callback/*"]
-  const details = global.config.iosAppIds.map(id => {
+  const appIds = global.config.iosAppIds;
+  const path = '/sdk-callback/*';
+
+  // Ref: https://stackoverflow.com/a/61232752
+  //
+  // There are two formats for the AASA file.
+  // The newer one is supported on iOS 13 and above,
+  // the older one on iOS 12 and below. There is no
+  // official documentation on how to combine the formats,
+  // but this seems to work.
+
+  const details = appIds.map(id => {
     return {
       appID: id,
-      paths: paths
+      paths: [path]
     }
   });
+  if (details.length > 0) {
+    details[0].appIDs = appIds;
+    details[0].components = [
+      {
+        '/': path,
+        comment: 'Pattern for all iOS Universal Links'
+      }
+    ];
+  }
+
   const payload = {
     applinks: {
       apps: [],
