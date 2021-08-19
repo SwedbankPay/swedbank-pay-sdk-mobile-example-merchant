@@ -10,7 +10,7 @@ module.exports.schema = Joi.object().keys({
 }).unknown(true);
 
 function buildTrampolineUrl(query, url) {
-    const endpoint = 'https://ecom.stage.payex.com/externalresourcehost/trampoline';
+    const endpoint = 'https://ecom.payex.com/externalresourcehost/trampoline';
     // URLSeachParams does not encode queries in accordance
     // with RFC 3986, so we cannot use it here :(
     let trampolineUrl = `${endpoint}?target=${encodeURIComponent(url)}&language=${encodeURIComponent(query.language)}`;
