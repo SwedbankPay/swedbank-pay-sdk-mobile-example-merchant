@@ -48,7 +48,7 @@ public class Controller {
         paymentOrderRequest
                 .getPaymentorder()
                 .getPayeeInfo()
-                .setPayeeReference("AB" + Integer.toString((int) (Math.random() * ((999 - 100) + 1)) + 100));
+                .setPayeeReference("AB" + Integer.toString((int) (Math.random() * (1000))));
         WebClient client = WebClient
                 .builder()
                 .baseUrl(payexBaseUrl)
@@ -68,7 +68,7 @@ public class Controller {
         paymentRequest
                 .getPayment()
                 .getPayeeInfo()
-                .setPayeeReference("AB" + Integer.toString((int) (Math.random() * ((999 - 100) + 1)) + 100));
+                .setPayeeReference("AB" + Integer.toString((int) (Math.random() * (1000))));
         WebClient client = WebClient
                 .builder()
                 .baseUrl(payexBaseUrl)

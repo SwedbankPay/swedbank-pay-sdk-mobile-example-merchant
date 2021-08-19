@@ -1,7 +1,7 @@
 openapi: '3.0.2'
 info:
   title: PayEx Mobile Backend
-  version: '1.0-beta04'
+  version: '1.0.1'
 components:
   schemas:
     TopLevelResources:
@@ -455,6 +455,27 @@ components:
                     type: array
                     items:
                       type: object
+                  mobileSDK:
+                    description: Merchant Backend specific links related to this token
+                    type: object
+                    properties:
+                      delete:
+                        description: A URL for the PATCH `paymentToken` operation
+                        type: string
+                        example: /payers/1234/paymentTokens/5678
+                        
+    DeletePaymentTokenArguments:
+      type: object
+      properties:
+        status:
+          description: The desired status for the token. Must be `Deleted`
+          type: string
+          enum:
+            - Deleted
+        comment:
+          description: A reason for the deletion
+          type: string
+          example: Deleted by user
 
 paths:
   /:
@@ -500,13 +521,13 @@ paths:
               description: N.B. The URL must be *resolved* against the entry point request URL, not simply appended to it.
               operationId: POST consumers
               parameters:
-                consumers: $response.body/consumers
+                consumers: $response.body#/consumers
 
             PostPaymentOrders:
               description: N.B. The URL must be *resolved* against the entry point request URL, not simply appended to it.
               operationId: POST paymentorders
               parameters:
-                paymentorders: $response.body/paymentorders
+                paymentorders: $response.body#/paymentorders
 
   /{consumers}:
     parameters:
@@ -634,6 +655,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PayerOwnedPaymentTokens'
+          links:
+            delete:
+              description: N.B. The URL must be *resolved* against the entry point request URL, not simply appended to it.
+              operationId: PATCH paymentToken
+              parameters:
+                paymentToken: $response.body#/payerOwnedPaymentTokens/paymentTokens/mobileSDK/delete
+  
+  /{paymentToken}:
+    parameters:
+      - name: paymentToken
+        in: path
+        required: true
+        schema:
+          type: string
+    patch:
+      operationId: PATCH paymentToken
+      summary: Deletes a payment token
+      description: >
+        Making a PATCH request to the delete URL of a payment token
+        can be used to delete the token.
+        
+        
+        In the future, this endpoint may be extended to other purposes.
+        For now, the only possible operation is deletion, which is achieved
+        by setting the `status` parameter to `Deleted`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeletePaymentTokenArguments'
+      responses: 
+        '200':
+          description: Token deleted
+          content:
+            application/json:
+              schema:
+                type: object
 
   /sdk-callback/android-intent:
     get:

@@ -1,0 +1,32 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/examples/java/merchant"
+  schedule:
+    interval: daily
+    time: "03:00"
+    timezone: Europe/Oslo
+  open-pull-requests-limit: 99
+  reviewers:
+  - jnordenswan
+  assignees:
+  - jnordenswan
+- package-ecosystem: npm
+  directory: "/examples/node.js"
+  schedule:
+    interval: daily
+    time: "03:00"
+    timezone: Europe/Oslo
+  open-pull-requests-limit: 99
+  reviewers:
+  - IhmeHippi
+  - jnordenswan
+  assignees:
+  - IhmeHippi
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "03:00"
+    timezone: Europe/Oslo
+  open-pull-requests-limit: 99

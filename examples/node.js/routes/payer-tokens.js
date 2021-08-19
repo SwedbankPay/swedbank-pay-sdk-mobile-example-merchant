@@ -16,8 +16,20 @@ module.exports.route = async (req, res) => {
     try {
         await authorize(req);
         const payerRef = req.params.ref;
-        const tokens = await get(`/psp/paymentorders/payerownedpaymenttokens/${payerRef}`);
-        res.status(200).send(tokens).end();
+        const response = await get(`/psp/paymentorders/payerownedpaymenttokens/${payerRef}`);
+        const ownedTokens = response ? response.payerOwnedPaymentTokens : null;
+        const tokens = ownedTokens ? ownedTokens.paymentTokens : null;
+        for (const tokenInfo of tokens) {
+            const token = tokenInfo.paymentToken;
+            if (token) {
+                // All the tokens should have this field,
+                // but we cannot form the delete url without it,
+                // so we have to check.
+                const deleteUrl = `/payers/${payerRef}/paymentTokens/${token}`;
+                tokenInfo.mobileSDK = { delete: deleteUrl };
+            }
+        }
+        res.status(200).send(response).end();
     } catch (e) {
         console.log('Failed to get payer owned tokens');
         console.log(e);

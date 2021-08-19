@@ -1,0 +1,38 @@
+{
+  "paymentorder": {
+    "operation": "Purchase",
+    "currency": "SEK",
+    "amount": 1000,
+    "vatAmount": 200,
+    "description": "Order 12345678",
+    "userAgent": "SwedbankPaySDK-Android/1.0",
+    "language": "en-US",
+    "generateRecurrenceToken": false,
+    "urls": {
+      "hostUrls": [
+        "https://example.com/"
+      ],
+      "completeUrl": "https://example.com/complete",
+      "cancelUrl": "https://example.com/cancel",
+      "paymentUrl": "https://example.com/sdk-callback/android-intent?package=your.ecom.app&id=abcdef"
+    },
+    "payeeInfo": {
+      "payeeId": "merchant-token",
+      "payeeReference": "order-id"
+    },
+    "orderItems": [
+      {
+        "reference": "item987",
+        "name": "Demo Item",
+        "type": "PRODUCT",
+        "class": "TestProduct",
+        "quantity": 1,
+        "quantityUnit": "pcs",
+        "unitPrice": 1000,
+        "vatPercent": 2500,
+        "amount": 1000,
+        "vatAmount": 200
+      }
+    ]
+  }
+}
