@@ -10,7 +10,7 @@
   "dependencies": {
     "celebrate": "^15.0.0",
     "content-type-parser": "^1.0.2",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "node-fetch": "^2.6.1",
     "problem-json": "^0.3.0"
   },
