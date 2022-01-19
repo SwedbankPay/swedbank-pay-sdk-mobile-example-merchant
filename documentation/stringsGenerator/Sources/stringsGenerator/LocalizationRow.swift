@@ -3,3 +3,11 @@
 //
 
 import Foundation
+
+struct LocalizationRow: Decodable {
+    let key: String
+    let description: String
+    let english: String
+    let norwegian: String
+    let swedish: String
+}
