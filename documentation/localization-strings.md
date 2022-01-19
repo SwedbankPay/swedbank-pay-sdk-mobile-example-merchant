@@ -9,7 +9,6 @@ Note that there is a confusion around swedbankpaysdk_problem_unauthorized and sw
 | --- | ----------- | ------- | ------------------ | ------- |
 | swedbankpaysdk_error_dialog_title | A general error title (missing translation) | Error | Error | Error |
 | swedbankpaysdk_dialog_close | Close button label (missing translation) | Close |  | Stäng |
-| swedbankpaysdk_js_prompt_hint | There are general prompts asking for input, they have a label telling users to enter text | Input | | |
 | OK | General ok message | OK | OK | OK |
 | Cancel | General cancellation | Cancel | Avbryt | Avbryt |
 | browserAlertTitle | Description missing | You're almost done! | Du er nesten ferdig! | Du är snart klar! |
@@ -22,7 +21,7 @@ Note that there is a confusion around swedbankpaysdk_problem_unauthorized and sw
 | swedbankpaysdk_failed_init_consumer | Shown if the temporary error happened when starting the “checkin” phase | Could not initialize identification. | Vi kunne ikke starte identifiseringen. | Kunde inte påbörja identifieringen. | 
 | swedbankpaysdk_failed_create_payment | Shown if the temporary error happened when starting the “checkout” phase | Could not initialize payment. | Vi kunne ikke starte betalingen. | Kunde inte påbörja betalningen. | 
 | swedbankpaysdk_pull_to_refresh | Shown as part of the temporary error message | Pull down to retry. | Dra ned for å prøve igjen. |  | 
-|  | "Shown as the “hint” for the text field of a JavaScript prompt, if a 3D-Secure page displays one (this is unlikely to happen in practice, but it is possible). | Input | Fyll inn | Fyll i | 
+| swedbankpaysdk_js_prompt_hint | "Shown as the “hint” for the text field of a JavaScript prompt, if a 3D-Secure page displays one (this is unlikely to happen in practice, but it is possible). | Input | Fyll inn | Fyll i | 
 | swedbankpaysdk_bad_init_request_title | Shown if there is a fatal error when starting a payment | Unable to start payment at this time | Kunne ikke starte betalingen nå | Det gick inte att starta betalningen | 
 | swedbankpaysdk_terminal_failure_title | Shown if the payment menu makes an onError callback | Configuration Error | Noe er feil med oppsettet | Konfigurationsfel | 
 | swedbankpaysdk_payment_complete | These are not expected to be seen by users normally. In addition, they are only used if the backend for the SDK is using the “Merchant Backend API” specification. These are all “error detail” messages, i.e. they are always shown in the context of either a “Communication Error” or a “Unable to Start Payment at This Time” message: | Payment complete | Betalingen er fullført | Betalat och klart | 
