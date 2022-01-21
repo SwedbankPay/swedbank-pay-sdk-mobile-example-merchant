@@ -10,7 +10,7 @@ struct LanguageFile {
 }
 
 enum LanguageType: String {
-    
+
     case english
     case norwegian
     case swedish
