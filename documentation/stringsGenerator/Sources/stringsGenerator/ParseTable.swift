@@ -30,8 +30,8 @@ class ParseTable {
 
         let sourceURL = URL(string: localizationSource)!
         //print("filepath given to script \(fileURL)")
-        guard let sourceFile = String(data: try? Data(contentsOf: sourceURL), encoding: .utf8) else {
-            fatalError("Should never fail, or something is really wrong.")
+        guard let contents = try? Data(contentsOf: sourceURL), let sourceFile = String(data: contents, encoding: .utf8) else {
+            fatalError("Should never fail, are files missing?")
         }
         //detect linefeed or normal newlines
         let normalEndings = sourceFile.range(of: "\r\n")?.isEmpty ?? true
