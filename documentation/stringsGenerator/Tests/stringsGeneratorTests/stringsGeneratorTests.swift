@@ -2,7 +2,7 @@ import XCTest
 import class Foundation.Bundle
 
 final class stringsGeneratorTests: XCTestCase {
-    func _testExample() throws {
+    func prevent_testExample() throws {
         // No tests yet!
 
         // Some of the APIs that we use below are available in macOS 10.13 and above.
