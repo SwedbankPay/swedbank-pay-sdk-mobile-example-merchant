@@ -13,10 +13,10 @@ Note that there is a confusion around swedbankpaysdk_problem_unauthorized and sw
 | Cancel | General cancellation | Cancel | Avbryt | Avbryt |
 | browserAlertTitle | Description missing | You're almost done! | Du er nesten ferdig! | Du är snart klar! |
 | browserAlertBody | Description missing | Your payment is being processed. Return to your browser to continue. | Betalingen din behandles. Gå tilbake til nettleseren for å fortsette. | Din betalning bearbetas. Gå tillbaka till webbläsaren för att fortsätta. |
-| maybeStuckAlertTitle | Description missing | Stuck? |   |   |
-| maybeStuckAlertBody | Description missing | It looks like the payment has not progressed for a while. Do you want to wait, or retry the payment in compatibility mode? |      |      |
-| maybeStuckAlertWait  | Description missing | Wait |      |      | 
-| maybeStuckAlertRetry | Description missing | Retry |      |      | 
+| maybeStuckAlertTitle | The SDK detecting/guessing that a payment is stuck. | Stuck? |   |   |
+| maybeStuckAlertBody | The SDK defaults to opening “unknown” payment flows in the browser, in most cases the best UX is accomplished by staying in the web view. To stay in the web view as often as possible, the payment flow will initially stay in the web view, but if the SDK suspects that the process may have got stuck, it will alert the user and allow them to retry the payment.. Determining that the payment is stuck is not an exact science, so the text should communicate that the SDK is “making a guess” rather than reporting a definite error. Further, the situation is expected to be rare; most users should never see this message. | It looks like the payment has not progressed for a while. Do you want to wait, or retry the payment in compatibility mode? |      |      |
+| maybeStuckAlertWait  | The button telling the SDK to wait when stuck. | Wait |      |      | 
+| maybeStuckAlertRetry | The button telling the SDK to retry when stuck. | Retry |      |      | 
 | swedbankpaysdk_retryable_error_title | Shown if there is a temporary error when starting a payment | Communication Error | Kommunikasjonsfeil | Kommunikationsfel |
 | swedbankpaysdk_failed_init_consumer | Shown if the temporary error happened when starting the “checkin” phase | Could not initialize identification. | Vi kunne ikke starte identifiseringen. | Kunde inte påbörja identifieringen. | 
 | swedbankpaysdk_failed_create_payment | Shown if the temporary error happened when starting the “checkout” phase | Could not initialize payment. | Vi kunne ikke starte betalingen. | Kunde inte påbörja betalningen. | 
