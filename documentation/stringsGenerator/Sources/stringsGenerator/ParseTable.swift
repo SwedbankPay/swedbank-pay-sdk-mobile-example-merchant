@@ -124,6 +124,8 @@ class ParseTable {
         
         let strings = transformRows(language, parsed) { key, word in
             
+            let word = word.replacingOccurrences(of: "'", with: "\'")
+            
             """
                 <string name="\(key)">\(word)</string>
             """
