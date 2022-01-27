@@ -4,19 +4,9 @@
 
 import Foundation
 
-struct LanguageFile {
-    let folderName: String
-    let language: LanguageType
-}
-
-enum LanguageType: String {
-    
-    case english
-    case norwegian
-    case swedish
-}
-
 class ParseTable {
+    
+    let docURL: URL
     
     init() {
         guard #available(macOS 10.15, *) else { exit(1) }
@@ -26,38 +16,42 @@ class ParseTable {
 
         let path = URL(fileURLWithPath: fileManager.currentDirectoryPath).appendingPathComponent(script)
             .absoluteString
-        let end = path.range(of: "merchant/documentation/")!.upperBound
+        guard let end = path.range(of: "merchant/documentation/")?.upperBound else {
+            fatalError("You must run this from the terminal:\ncd documentation/stringsGenerator \nswift run")
+        }
         let documentationPath = String(path[path.startIndex..<end])
-        let fullString = documentationPath + "localization-strings.md"
+        let localizationSource = documentationPath + "localization-strings.md"
+        
+        //create one folder for all localizations
+        docURL = URL(string: documentationPath)!.deletingLastPathComponent().appendingPathComponent("localizations", isDirectory: true)
+        try? fileManager.createDirectory(at: docURL, withIntermediateDirectories: false, attributes: nil)
+        let languages = [LanguageFile(isoName: "en", language: .english), LanguageFile(isoName: "nb", language: .norwegian), LanguageFile(isoName: "sv", language: .swedish)]
+        
 
-        let fileURL = URL(string: fullString)!
+        let sourceURL = URL(string: localizationSource)!
         //print("filepath given to script \(fileURL)")
-        let file = String(data: try! Data(contentsOf: fileURL), encoding: .utf8)!
+        guard let sourceFile = String(data: try? Data(contentsOf: sourceURL), encoding: .utf8) else {
+            fatalError("Should never fail, or something is really wrong.")
+        }
         //detect linefeed or normal newlines
-        let normal = file.range(of: "\r\n")?.isEmpty ?? true
-        let parsed:[LocalizationRow] = file.split(separator: normal ? "\n" : "\r\n")
+        let normalEndings = sourceFile.range(of: "\r\n")?.isEmpty ?? true
+        let parsed:[LocalizationRow] = sourceFile.split(separator: normalEndings ? "\n" : "\r\n")
             .compactMap {
             fetchRow(String($0))
         }
         
-        //generate strings files for iOS
-        let docURL = URL(string: documentationPath)!.deletingLastPathComponent().appendingPathComponent("strings", isDirectory: true)
-        try? fileManager.createDirectory(at: docURL, withIntermediateDirectories: false, attributes: nil)
-        
-        let languages = [LanguageFile(folderName: "en.lproj", language: .english), LanguageFile(folderName: "nb.lproj", language: .norwegian), LanguageFile(folderName: "sv.lproj", language: .swedish)]
         for language in languages {
-            let data = generateStringsFile(language, parsed)
-            let folder = docURL.appendingPathComponent(language.folderName, isDirectory: true)
-            try? fileManager.createDirectory(at: folder, withIntermediateDirectories: false, attributes: nil)
-            do {
-                try data.write(to: folder.appendingPathComponent("SwedbankPaySDKLocalizable.strings"))
-            } catch {
-                print("error writing data: \(error)")
-            }
+            
+            //generate strings files for Android
+            generateAndroidLocalization(language, parsed)
+            //generate strings files for iOS
+            generateIOSLocalization(language, parsed)
         }
     }
     
     var startOfFile = false
+    
+    /// Fetch rows from the table and parse them
     func fetchRow(_ next: String) -> LocalizationRow? {
         
         //skip the first info section to the start of the table
@@ -79,11 +73,10 @@ class ParseTable {
         return LocalizationRow(key: cleanedRow[0], description: cleanedRow[1], english: cleanedRow[2], norwegian: cleanedRow[3], swedish: cleanedRow[4])
     }
     
-    func generateStringsFile(_ language: LanguageFile, _ parsed: [LocalizationRow]) -> Data {
+    func transformRows(_ language: LanguageFile, _ parsed: [LocalizationRow], _ transform: (_ key: String, _ word: String) -> String) -> [String] {
         
         let strings: [String] = parsed.compactMap { row in
             
-            //should look like this: "OK" = "OK";
             var word: String
             switch language.language {
                 case .swedish:
@@ -94,10 +87,64 @@ class ParseTable {
                     word = row.english
             }
             
-            return "\"\(row.key)\" = \"\(word)\";"
+            if word.isEmpty {
+                return nil
+            }
+            return transform(row.key, word)
         }
+        return strings
+    }
+    
+    
+    func generateIOSLocalization(_ language: LanguageFile, _ parsed: [LocalizationRow]) {
+        
+        let strings = transformRows(language, parsed) { key, word in
+            
+            //should look like this: "maybeStuckAlertTitle" = "Stuck?";
+            """
+            "\(key)" = "\(word)";
+            """
+        }
+        
         let file = String(strings.joined(separator: "\n"))
+        let data = file.data(using: .utf8)!
+        
+        let folder = docURL.appendingPathComponent("\(language.isoName).lproj", isDirectory: true)
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: false, attributes: nil)
+        do {
+            try data.write(to: folder.appendingPathComponent("SwedbankPaySDKLocalizable.strings"))
+        } catch {
+            print("error writing data: \(error)")
+        }
+        
         //print(file)
-        return file.data(using: .utf8)!
+    }
+    
+    func generateAndroidLocalization(_ language: LanguageFile, _ parsed: [LocalizationRow]) {
+        
+        let strings = transformRows(language, parsed) { key, word in
+            
+            """
+                <string name="\(key)">\(word)</string>
+            """
+        }
+        let file = """
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources>
+        \(String(strings.joined(separator: "\n")))
+        </resources>
+        """
+        
+        let data = file.data(using: .utf8)!
+        let androidFolder = "values-\(language.isoName)"
+        let folder = docURL.appendingPathComponent(androidFolder, isDirectory: true)
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: false, attributes: nil)
+        do {
+            try data.write(to: folder.appendingPathComponent("strings.xml"))
+        } catch {
+            print("error writing data: \(error)")
+        }
+        
+        //print(file)
     }
 }
