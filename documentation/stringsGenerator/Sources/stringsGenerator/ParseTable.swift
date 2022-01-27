@@ -31,7 +31,7 @@ class ParseTable {
         let sourceURL = URL(string: localizationSource)!
         //print("filepath given to script \(fileURL)")
         guard let contents = try? Data(contentsOf: sourceURL), let sourceFile = String(data: contents, encoding: .utf8) else {
-            fatalError("Should never fail, are files missing?")
+            fatalError("Should never fail, is \(localizationSource) missing or corrupt?")
         }
         //detect linefeed or normal newlines
         let normalEndings = sourceFile.range(of: "\r\n")?.isEmpty ?? true
@@ -116,8 +116,6 @@ class ParseTable {
         } catch {
             print("error writing data: \(error)")
         }
-        
-        //print(file)
     }
     
     func generateAndroidLocalization(_ language: LanguageFile, _ parsed: [LocalizationRow]) {
@@ -126,7 +124,7 @@ class ParseTable {
             
             let word = word.replacingOccurrences(of: "'", with: "\'")
             
-            """
+            return """
                 <string name="\(key)">\(word)</string>
             """
         }
