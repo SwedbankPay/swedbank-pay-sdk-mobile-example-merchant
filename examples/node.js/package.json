@@ -8,7 +8,7 @@
     "url": "git@github.com:SwedbankPay/swedbank-pay-sdk-mobile-example-merchant.git"
   },
   "dependencies": {
-    "celebrate": "^15.0.0",
+    "celebrate": "^15.0.1",
     "content-type-parser": "^1.0.2",
     "express": "^4.17.2",
     "node-fetch": "^3.2.0",
