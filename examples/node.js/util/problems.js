@@ -1,7 +1,7 @@
 'use strict';
 
 const constants = require('./constants.js');
-const { isCelebrate } = require('celebrate');
+const { celebrate, Joi, errors, Segments } = require('celebrate');
 const problemJson = require('problem-json');
 
 /**
@@ -18,10 +18,11 @@ function sendProblem(res, problem) {
  * errors as problem+json.
  */
 function celebrateProblems(err, req, res, next) {
-    if (!isCelebrate(err)) {
+
+    // Check if this error belongs to celebrate
+    if (!celebrate(err)) {
         return next(err);
     }
-
     const {
         joi,
         meta,

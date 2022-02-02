@@ -2,7 +2,7 @@
 
 const constants = require('./constants.js');
 const contentTypeParser = require('content-type-parser');
-const fetch = require('node-fetch');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const problemJson = require('problem-json');
 const problems = require('./problems.js');
 
