@@ -3,12 +3,12 @@
 name: Node integration tests
 
 # Run this workflow always 
-on: workflow_dispatch
-#  push:
-#    branches: [ * ]
-#  pull_request:
-#    branches: [ * ]
-
+on:
+  push:
+    branches: [ * ]
+  pull_request:
+    branches: [ * ]
+#on: workflow_dispatch
 
 jobs:
   build:
