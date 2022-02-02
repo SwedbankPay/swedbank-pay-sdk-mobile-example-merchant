@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./examples/integration-tests
+        working-directory: ./examples/node.js
 
     steps:
     - uses: actions/checkout@v2
@@ -24,6 +24,7 @@ jobs:
     
     - name: Run Node integration test
       shell: bash
+      working-directory: ./examples/integration-tests
       env:
         API_KEY: ${{ secrets.API_KEY }}
         MERCHANT_ID: ${{ secrets.MERCHANT_ID }}
