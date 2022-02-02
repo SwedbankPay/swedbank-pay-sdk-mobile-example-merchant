@@ -1,0 +1,31 @@
+# This workflow will run integration tests on the java backend
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Java integration tests
+
+on: workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./examples/integration-tests
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v2
+      with:
+        distribution: adopt
+        java-version: 8
+    - name: debug step
+      run: ls -lhAtr ; pwd
+    - name: Run Java integration test
+      shell: bash
+      env:
+        API_KEY: ${{ secrets.API_KEY }}
+        MERCHANT_ID: ${{ secrets.MERCHANT_ID }}
+        LARGE_SECRET_PASSPHRASE: ${{ secrets.MERCHANT_TOKEN }}
+      run: ./test-backends.sh
