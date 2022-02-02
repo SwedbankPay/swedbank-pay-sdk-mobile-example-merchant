@@ -25,9 +25,8 @@ jobs:
       with:
         node-version: '16'
         cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
+        cache-dependency-path: './examples/node.js/package-lock.json'
     - run: npm install
-    - run: npm test
     
     - name: Run Node integration test
       shell: bash
