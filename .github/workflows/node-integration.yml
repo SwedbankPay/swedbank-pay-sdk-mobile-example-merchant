@@ -25,8 +25,12 @@ jobs:
       with:
         node-version: '16'
         cache: 'npm'
-    - run: npm install
-    - run: npm test
+    - name: Install npm
+      run: npm install
+      working-directory: ./examples/node.js
+    - name: Test npm
+      run: npm test
+      working-directory: ./examples/node.js
     
     - name: Run Node integration test
       shell: bash
