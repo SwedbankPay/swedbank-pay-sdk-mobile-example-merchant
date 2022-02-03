@@ -2,7 +2,7 @@
 
 const constants = require('./constants.js');
 //const { celebrate, Joi, errors, Segments } = require('celebrate');
-const { celebrate } = require('celebrate');
+const { isCelebrateError } = require('celebrate');
 const problemJson = require('problem-json');
 
 /**
@@ -19,11 +19,22 @@ function sendProblem(res, problem) {
  * errors as problem+json.
  */
 function celebrateProblems(err, req, res, next) {
-
     // Check if this error belongs to celebrate
-    if (!celebrate(err)) {
+    if (!isCelebrateError(err)) {
         return next(err);
     }
+    let array = Array.from(err.details, ([name, value]) => ({ name, value }));
+    let firstErrorDetail = array[0].value.details[0];
+
+    const problem = new problemJson.Document({
+        type: constants.problemBadRequest,
+        title: 'Bad Request',
+        status: 400,
+        detail: firstErrorDetail
+    });
+
+    /*
+    Old code is not working anymore but is perhaps useful?
     const {
         joi,
         meta,
@@ -39,7 +50,7 @@ function celebrateProblems(err, req, res, next) {
         status: 400,
         detail: joi.message
     }, extension);
-
+    */
     return sendProblem(res, problem);
 }
 
