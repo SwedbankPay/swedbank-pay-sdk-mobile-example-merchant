@@ -25,8 +25,8 @@ jobs:
     - run: npm install
     
     - name: Run Node integration test
-      shell: bash
-      working-directory: ./examples/integration-tests
+      #shell: bash
+      #working-directory: ./examples/integration-tests
       env:
         API_KEY: ${{ secrets.API_KEY }}
         MERCHANT_ID: ${{ secrets.MERCHANT_ID }}
