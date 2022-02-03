@@ -12,6 +12,8 @@ var headers = { Accept: 'application/json' }
 headers[constants.apiKeyHeaderName] = env["API_KEY"]
 headers[constants.accessTokenHeaderName] = env["MERCHANT_TOKEN"]
 
+console.log(env["REM"])
+
 describe('Post PaymentOrder v2', () => {
   
   it('Payment order should be accepted', (done) => {
