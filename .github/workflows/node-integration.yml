@@ -37,5 +37,4 @@ jobs:
         SWBPAY_merchantId: ${{ secrets.MERCHANT_ID }}
         SWBPAY_apiKey: ${{ secrets.API_KEY }}
         SWBPAY_merchantToken: ${{ secrets.MERCHANT_TOKEN }}
-        REM: "Remove environment var"
       run: npm test
