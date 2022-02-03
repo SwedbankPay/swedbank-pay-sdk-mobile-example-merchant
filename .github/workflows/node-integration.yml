@@ -2,7 +2,9 @@
 
 name: Node integration tests
 
-on: workflow_dispatch
+# Run this workflow always 
+on: [push, pull_request, workflow_dispatch]
+#on: workflow_dispatch
 
 jobs:
   build:
@@ -19,14 +21,20 @@ jobs:
       with:
         node-version: '16'
         cache: 'npm'
+        cache-dependency-path: './examples/node.js/package-lock.json'
     - run: npm install
-    - run: npm test
+
+    - name: Copy config file
+      shell: bash
+      run: cp example.appconfig.json appconfig.json
     
     - name: Run Node integration test
-      shell: bash
-      working-directory: ./examples/integration-tests
       env:
         API_KEY: ${{ secrets.API_KEY }}
         MERCHANT_ID: ${{ secrets.MERCHANT_ID }}
         LARGE_SECRET_PASSPHRASE: ${{ secrets.MERCHANT_TOKEN }}
-      run: ./test-node.sh
+        MERCHANT_TOKEN: ${{ secrets.MERCHANT_TOKEN }}
+        SWBPAY_merchantId: ${{ secrets.MERCHANT_ID }}
+        SWBPAY_apiKey: ${{ secrets.API_KEY }}
+        SWBPAY_merchantToken: ${{ secrets.MERCHANT_TOKEN }}
+      run: npm test
