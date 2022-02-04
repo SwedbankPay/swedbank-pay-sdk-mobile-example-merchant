@@ -14,6 +14,8 @@ const paymentOrderSchema = Joi.object().keys({
     operation: Joi.string()
         .valid('Purchase', 'Verify')
         .required(),
+    productName: Joi.string()
+        .valid('Checkout3', 'checkout3'),
     currency: Joi.string()
         .required(),
     amount: Joi.number()

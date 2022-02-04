@@ -2,7 +2,7 @@
 
 const constants = require('./constants.js');
 //const { celebrate, Joi, errors, Segments } = require('celebrate');
-const { celebrate } = require('celebrate');
+const { isCelebrateError } = require('celebrate');
 const problemJson = require('problem-json');
 
 /**
@@ -19,25 +19,28 @@ function sendProblem(res, problem) {
  * errors as problem+json.
  */
 function celebrateProblems(err, req, res, next) {
-
     // Check if this error belongs to celebrate
-    if (!celebrate(err)) {
+    if (!isCelebrateError(err)) {
         return next(err);
     }
-    const {
-        joi,
-        meta,
-    } = err;
-
+    let details = err.details.get("body").details;
+    if (details[0] !== undefined) {
+        details = details[0];
+    }
+    if (!details)
+        details = "Unknown error message";
+    //details = JSON.stringify(details, null, 4)
+    
     const extension = new problemJson.Extension({
-        source: meta.source,
-        errors: joi.details
+        source: details.context.label,
+        errors: details
     });
+
     const problem = new problemJson.Document({
         type: constants.problemBadRequest,
         title: 'Bad Request',
         status: 400,
-        detail: joi.message
+        detail: details.message
     }, extension);
 
     return sendProblem(res, problem);
