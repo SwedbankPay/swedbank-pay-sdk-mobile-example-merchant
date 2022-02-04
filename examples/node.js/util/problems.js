@@ -23,12 +23,12 @@ function celebrateProblems(err, req, res, next) {
     if (!isCelebrateError(err)) {
         return next(err);
     }
-    let details = err.details.get("body").details
+    let details = err.details.get("body").details;
     if (details[0] !== undefined) {
         details = details[0]
     }
     if (!details)
-        details = "Unknown error message"
+        details = "Unknown error message";
     //details = JSON.stringify(details, null, 4)
     
     const extension = new problemJson.Extension({
