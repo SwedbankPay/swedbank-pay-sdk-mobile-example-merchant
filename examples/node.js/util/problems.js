@@ -25,7 +25,7 @@ function celebrateProblems(err, req, res, next) {
     }
     let details = err.details.get("body").details;
     if (details[0] !== undefined) {
-        details = details[0]
+        details = details[0];
     }
     if (!details)
         details = "Unknown error message";

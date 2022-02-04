@@ -46,7 +46,7 @@ describe('Handle bad formatted PaymentOrder', () => {
   it('Payment order should NOT be accepted', (done) => {
 
     let paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
-    paymentOrder.paymentorder.operation = "invalid setting"
+    paymentOrder.paymentorder.operation = "invalid setting";
     chai.request(app)
       .post('/paymentorders')
       .set(headers)
