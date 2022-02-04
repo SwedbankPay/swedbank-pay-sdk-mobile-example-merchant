@@ -23,34 +23,24 @@ function celebrateProblems(err, req, res, next) {
     if (!isCelebrateError(err)) {
         return next(err);
     }
-    let array = Array.from(err.details, ([name, value]) => ({ name, value }));
-    let firstErrorDetail = array[0].value.details[0];
-
-    const problem = new problemJson.Document({
-        type: constants.problemBadRequest,
-        title: 'Bad Request',
-        status: 400,
-        detail: firstErrorDetail
-    });
-
-    /*
-    Old code is not working anymore but is perhaps useful?
-    const {
-        joi,
-        meta,
-    } = err;
-
+    let details = err.details.get("body").details || "Unknown error message"
+    if (details[0] !== undefined) {
+        details = details[0]
+    }
+    //details = JSON.stringify(details, null, 4)
+    
     const extension = new problemJson.Extension({
-        source: meta.source,
-        errors: joi.details
+        source: details.context.label,
+        errors: details
     });
+
     const problem = new problemJson.Document({
         type: constants.problemBadRequest,
         title: 'Bad Request',
         status: 400,
-        detail: joi.message
+        detail: details.message
     }, extension);
-    */
+
     return sendProblem(res, problem);
 }
 
