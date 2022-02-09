@@ -11,6 +11,9 @@ const { makeUnauthorizedProblem } = require('../util/problems.js');
  * Validation schema for paymentorder.
  */
 const paymentOrderSchema = Joi.object().keys({
+    Checkin: Joi.boolean(),
+    gdprDataProcessingAgreement: Joi.boolean(),
+
     operation: Joi.string()
         .valid('Purchase', 'Verify')
         .required(),
@@ -32,8 +35,8 @@ const paymentOrderSchema = Joi.object().keys({
     language: Joi.string()
         .required(),
     instrument: Joi.string(),
-    generateRecurrenceToken: Joi.boolean()
-        .required(),
+    generateRecurrenceToken: Joi.boolean(),
+        //not required in V3:  .required(),
     generatePaymentToken: Joi.boolean(),
     disableStoredPaymentDetails: Joi.boolean(),
     restrictedToInstruments: Joi.array().items(Joi.string()),
@@ -65,6 +68,14 @@ const paymentOrderSchema = Joi.object().keys({
             .max(40)
     }).required(),
     payer: Joi.object({
+        //v3
+        requireConsumerInfo: Joi.boolean(),
+        digitalProducts: Joi.boolean(),
+        shippingAddressRestrictedToCountryCodes: Joi.array().items(Joi.string()),
+        checkin: Joi.boolean(),
+        gdprDataProcessingAgreement: Joi.boolean(),
+
+        //v2
         consumerProfileRef: Joi.string(),
         email: Joi.string(),
         msisdn: Joi.string(),
@@ -118,10 +129,12 @@ const paymentOrderSchema = Joi.object().keys({
             .required(),
         vatAmount: Joi.number()
             .integer()
-            .required()
+            .required(),
+        restrictedToInstruments: Joi.array().items(Joi.string())  //New in V3
     })),
     riskIndicator: Joi.object({
-        deliveryEmailAdress: Joi.string(),
+        deliveryEmailAdress: Joi.string(),  //Could be a misspelling in V2 
+        deliveryEmailAddress: Joi.string(),
         deliveryTimeFrameIndicator: Joi.string()
             .valid('01','02','03','04'),
         preOrderDate: Joi.string(),
