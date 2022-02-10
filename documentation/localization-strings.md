@@ -7,8 +7,8 @@ Note that there is a confusion around swedbankpaysdk_problem_unauthorized and sw
 
 | Key | Description | English | Norwegian (bokmål) | Swedish |
 | --- | ----------- | ------- | ------------------ | ------- |
-| swedbankpaysdk_error_dialog_title | A general error title (missing translation) | Error | Error | Error |
-| swedbankpaysdk_dialog_close | Close button label (missing translation) | Close |  | Stäng |
+| swedbankpaysdk_error_dialog_title | A general error title | Error | Error | Error |
+| swedbankpaysdk_dialog_close | Close button label | Close | Lukk | Stäng |
 | OK | General ok message | OK | OK | OK |
 | Cancel | General cancellation | Cancel | Avbryt | Avbryt |
 | browserAlertTitle | Description missing | You're almost done! | Du er nesten ferdig! | Du är snart klar! |
