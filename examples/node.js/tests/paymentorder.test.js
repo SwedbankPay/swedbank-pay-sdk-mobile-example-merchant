@@ -102,7 +102,7 @@ describe('Post PaymentOrder v3 with checkin', () => {
       .send(paymentOrder)
       .end((err, res) => {
 
-        console.log(res.text + "\n(result from test)\n")
+        //console.log(res.text + "\n(result from test)\n")
         checkCredentials(res)
 
         res.should.have.status(200);
