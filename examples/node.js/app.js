@@ -34,6 +34,7 @@ const callbackReload = require('./routes/sdk-callback-reload.js');
 const androidIntentCallback = require('./routes/android-intent-callback.js');
 const iosUniversalLinkCallback = require('./routes/ios-universal-link-callback.js');
 const payerTokens = require('./routes/payer-tokens.js');
+const payerExpand = require('./routes/payer-expand.js');
 const patchPayerToken = require('./routes/patch-payer-token.js');
 
 // Specify our routes
@@ -54,6 +55,8 @@ app.get(constants.androidIntentCallbackPath, celebrate({ query: androidIntentCal
   androidIntentCallback.route);
 app.get(constants.iosUniversalLinkCallbackPath, celebrate({ query: iosUniversalLinkCallback.schema }),
   iosUniversalLinkCallback.route);
+
+app.get('/payer/:psp/paymentorders/:ref', payerExpand.route);
 
 // Handle the errors from Celebrate. Must be defined after the routes.
 app.use(celebrateProblems);
