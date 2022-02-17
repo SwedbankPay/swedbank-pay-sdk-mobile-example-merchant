@@ -21,6 +21,7 @@ module.exports.route = async (req, res) => {
         const response = await get(`/${psp}/paymentorders/${payerRef}?$expand=payer`);
 
         // Your implementation should at this point probably calculate shipping costs and tell the client how to show this to the user, and present alternative shipping methods.
+        // In this example, we don't send in anything.
 
         res.status(200).send().end();
     } catch (e) {
