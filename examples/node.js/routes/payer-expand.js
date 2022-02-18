@@ -3,22 +3,14 @@
 const { get, sendError } = require('../util/networking.js');
 const { makeUnauthorizedProblem } = require('../util/problems.js');
 
-async function authorize(req) {
-    // To allow, add "allowGetPayerOwnedPaymentTokens": true to appconfig.json
-    // A real implementation must do access control to only
-    // allow a user to access their own tokens.
-    if (!global.config.allowGetPayerOwnedPaymentTokens) {
-        throw makeUnauthorizedProblem();
-    }
-}
-
 module.exports.route = async (req, res) => {
     try {
-        //This is sensative data but can only be accessed by the client, additional authorizations shouldn't be needed at this point.
+        //There is no need to send this data to the client, so we don't need to authorize here. But if you want to have the logic on the client-side, it is a good thing to protect the data.
         //await authorize(req);
         const payerRef = req.params.ref;
         const psp = req.params.psp; //This is not likely to change, but in case I allow some flexibility here.
-        const response = await get(`/${psp}/paymentorders/${payerRef}?$expand=payer`);
+        //const response = //Decide on shipping costs by evaluating the paymentOrder.payer.shippingAddress fields and/or give the user alternatives.
+        await get(`/${psp}/paymentorders/${payerRef}?$expand=payer`);
 
         // Your implementation should at this point probably calculate shipping costs and tell the client how to show this to the user, and present alternative shipping methods.
         // In this example, we don't send in anything.
