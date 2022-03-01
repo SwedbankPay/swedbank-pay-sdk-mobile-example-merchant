@@ -68,19 +68,19 @@ const paymentOrderSchema = Joi.object().keys({
             .max(40)
     }).required(),
     payer: Joi.object({
-        //v3
+        
+        //v3 Starter
         requireConsumerInfo: Joi.boolean(),
         digitalProducts: Joi.boolean(),
         shippingAddressRestrictedToCountryCodes: Joi.array().items(Joi.string()),
         checkin: Joi.boolean(),
         gdprDataProcessingAgreement: Joi.boolean(),
-        payerReference: Joi.string(),
 
-        //v2
+        //v2 + v3 PaymentsOnly
         consumerProfileRef: Joi.string(),
         email: Joi.string(),
         msisdn: Joi.string(),
-        payerReference: Joi.string(),
+        payerReference: Joi.string(),  
     }),
     orderItems: Joi.array().items(Joi.object({
         reference: Joi.string()
