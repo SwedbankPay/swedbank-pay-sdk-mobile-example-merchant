@@ -74,6 +74,7 @@ const paymentOrderSchema = Joi.object().keys({
         shippingAddressRestrictedToCountryCodes: Joi.array().items(Joi.string()),
         checkin: Joi.boolean(),
         gdprDataProcessingAgreement: Joi.boolean(),
+        payerReference: Joi.string(),
 
         //v2
         consumerProfileRef: Joi.string(),

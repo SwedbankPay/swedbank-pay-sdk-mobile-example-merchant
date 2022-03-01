@@ -28,7 +28,7 @@ module.exports.route = async (req, res) => {
         // Your implementation should at this point probably calculate shipping costs and tell the client to present this to the user, and/or alternative shipping methods.
         // In this example, we don't send in anything other than that things are ok.
 
-        res.status(200).send().end();
+        res.status(200).send({}).end();
     } catch (e) {
         console.log('Failed to expand resource');
         console.log(e);
