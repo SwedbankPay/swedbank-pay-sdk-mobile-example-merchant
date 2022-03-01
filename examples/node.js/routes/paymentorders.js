@@ -203,7 +203,7 @@ function checkPaymentOrder(req, paymentOrder) {
 function preparePaymentOrder(paymentOrder) {
     // Insert the payment order in our own database
     // to generate a unique reference for it.
-    const paymentId = global.database.insertPurchse(paymentOrder);
+    const paymentId = global.database.insertPurchase(paymentOrder);
     paymentOrder.payeeInfo.payeeId = global.config.merchantId;
     paymentOrder.payeeInfo.payeeReference = paymentId
 }
