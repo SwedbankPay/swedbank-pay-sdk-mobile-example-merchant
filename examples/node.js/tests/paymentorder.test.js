@@ -22,28 +22,6 @@ function checkCredentials(res) {
   chai.assert(res.status != 401, "Getting 401, is the credentials missing?\n" + res.text);
 }
 
-describe('Expand payer in a v3 payment order', () => {
-  
-  it('Payer should be expanded', (done) => {
-
-    chai.request(app)
-      .post("/expand") 
-      .set(headers)
-      .send({ resource: "/psp/paymentorders/d63f8079-01d9-499e-6f7d-08d9f03a45d6", expand: "payer" })
-      .end((err, res) => {
-
-        //console.log(res.body.paymentOrder.payer)
-        checkCredentials(res);
-
-        res.should.have.status(200);
-        res.body.should.be.a('object');
-        done();
-     });
-    
-  })
-  .timeout(15 * 1000);  //usually it never takes more than one second
-});
-
 describe('Post PaymentOrder v3', () => {
   
   it('Payment order should be accepted', (done) => {
@@ -112,6 +90,11 @@ describe('Post PaymentOrder v2', () => {
   .timeout(15 * 1000);  //usually it never takes more than one second
 });
 
+
+
+/**
+At this time, we do only support "PaymentsOnly" which means no checkin.
+
 describe('Post PaymentOrder v3 with checkin', () => {
   
   it('Checkin order should be accepted', (done) => {
@@ -135,3 +118,26 @@ describe('Post PaymentOrder v3 with checkin', () => {
   })
   .timeout(15 * 1000);  //usually it never takes more than one second
 });
+
+describe('Expand payer in a v3 payment order', () => {
+  
+  it('Payer should be expanded', (done) => {
+
+    chai.request(app)
+      .post("/expand") 
+      .set(headers)
+      .send({ resource: "/psp/paymentorders/d63f8079-01d9-499e-6f7d-08d9f03a45d6", expand: "payer" })
+      .end((err, res) => {
+
+        //console.log(res.body.paymentOrder.payer)
+        checkCredentials(res);
+
+        res.should.have.status(200);
+        res.body.should.be.a('object');
+        done();
+     });
+    
+  })
+  .timeout(15 * 1000);  //usually it never takes more than one second
+});
+*/

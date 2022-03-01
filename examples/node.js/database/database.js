@@ -17,7 +17,7 @@ module.exports = class Database {
      * @param purchase {object} the purchase data
      * @returns {number} ID allocated for the new purchase
      */
-    insertPurchse(purchase) {
+    insertPurchase(purchase) {
         // Get an ID for the purchase from our ID sequence
         const id = this.idSequence++;
 
