@@ -181,7 +181,7 @@ describe('Patch Instrument v3', () => {
 		}
 
 		chai.request(app)
-		  .post('/patch')
+		  .patch('/patch')
 		  .set(headers)
 		  .send(params)
 		  .end((err, res) => {

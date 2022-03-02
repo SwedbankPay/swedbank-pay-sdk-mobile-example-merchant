@@ -59,7 +59,7 @@ app.get(constants.iosUniversalLinkCallbackPath, celebrate({ query: iosUniversalL
   iosUniversalLinkCallback.route);
 
 app.post('/expand', celebrate({ body: expandResource.schema }), expandResource.route);
-app.post('/patch',  celebrate({ body: patchResource.schema }), patchResource.route);
+app.patch('/patch',  celebrate({ body: patchResource.schema }), patchResource.route);
 
 // Handle the errors from Celebrate. Must be defined after the routes.
 app.use(celebrateProblems);
