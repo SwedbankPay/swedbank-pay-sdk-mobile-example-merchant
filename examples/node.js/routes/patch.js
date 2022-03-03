@@ -1,7 +1,7 @@
 'use strict';
 
 const { Joi } = require('celebrate');
-const { get, patchUrl, sendError } = require('../util/networking.js');
+const { patchUrl, sendError } = require('../util/networking.js');
 
 /**
  * General patch operations for all supported by the example backend under V3. 
@@ -29,7 +29,7 @@ module.exports.route = async (req, res) => {
         //console.log(`Setting instrument of ${paymentId} to ${req.body.paymentorder.instrument}.`);
         //const swedbankPayId = global.database.findPspPurchaseId(paymentId);
         //console.log(`Payex id ${swedbankPayId}.`);
-        
+
         const body = {
             paymentorder: req.body.paymentorder
         };
