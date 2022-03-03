@@ -35,6 +35,7 @@ const paymentOrderSchema = Joi.object().keys({
     language: Joi.string()
         .required(),
     instrument: Joi.string(),
+    generateUnscheduledToken: Joi.boolean(),
     generateRecurrenceToken: Joi.boolean(),
         //not required in V3:  .required(),
     generatePaymentToken: Joi.boolean(),

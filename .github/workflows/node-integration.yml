@@ -3,7 +3,7 @@
 name: Node integration tests
 
 # Run this workflow always 
-on: [push, pull_request, workflow_dispatch]
+on: [pull_request, workflow_dispatch]
 #on: workflow_dispatch
 
 jobs:
