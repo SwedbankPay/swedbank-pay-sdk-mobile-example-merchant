@@ -3,6 +3,7 @@ const app = require('../app.js');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const fs = require("fs");
+const findOperation = require('../util/find-operation.js');
 
 const paymentorders = require('../routes/paymentorders.js');
 const { celebrate, Joi, errors, Segments } = require('celebrate');
@@ -20,6 +21,10 @@ let headers = {
 
 function checkCredentials(res) {
   chai.assert(res.status != 401, "Getting 401, is the credentials missing?\n" + res.text);
+}
+
+function printResult(res) {
+	console.log(JSON.stringify(JSON.parse(res.text), null, 4))
 }
 
 describe('Post PaymentOrder v3', () => {
@@ -148,6 +153,10 @@ describe('Patch Instrument v3', () => {
 
 	const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
 
+	//paymentOrder.paymentorder.generateRecurrenceToken = true
+    //paymentOrder.paymentorder.generateUnscheduledToken = true
+    // note that tokens are not compatible with all instruments
+    
 	chai.request(app)
 	  .post('/paymentorders')
 	  .set(headers)
@@ -155,19 +164,15 @@ describe('Patch Instrument v3', () => {
 	  .end((err, res) => {
 
 		checkCredentials(res);
+		if (res.status != 200) {
+			printResult(res)
+		}
 
 		res.should.have.status(200);
 		res.body.should.be.a('object');
 
-		var href = null
-		for (const operation of res.body.operations) {
-			if (operation.rel == "set-instrument") {
-				
-				href = operation.href
-				break
-			}
-		}
-		if (href == null) {
+		const href = findOperation(res.body, "set-instrument").href
+		if (!href) {
 			console.log("error! No operation!")
 		}
 
