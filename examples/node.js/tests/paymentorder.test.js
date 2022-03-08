@@ -199,3 +199,52 @@ describe('Patch Instrument v3', () => {
   })
   .timeout(15 * 1000);  //usually it never takes more than one second
 });
+
+describe('Patch Abort', () => {
+  
+  it('Payment order should be aborted', (done) => {
+
+	const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
+
+	chai.request(app)
+	  .post('/paymentorders')
+	  .set(headers)
+	  .send(paymentOrder)
+	  .end((err, res) => {
+
+		checkCredentials(res);
+		
+		res.should.have.status(200);
+		res.body.should.be.a('object');
+
+		const href = findOperation(res.body, "abort").href
+		if (!href) {
+			console.log("error! No operation!");
+		}
+
+		//Now patch this payment order!
+		let params = {
+			href: href,
+			paymentorder: {
+				operation: "Abort",
+				abortReason: "AbortedByUser"
+			}
+		};
+
+		chai.request(app)
+		  .patch('/patch')
+		  .set(headers)
+		  .send(params)
+		  .end((err, res) => {
+
+		  	//console.log(res.text) 
+		  	//console.log(err)
+		  	res.should.have.status(200);
+
+			done();
+		});
+	 });
+	
+  })
+  .timeout(15 * 1000);  //usually it never takes more than one second
+});

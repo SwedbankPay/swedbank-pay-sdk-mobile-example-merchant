@@ -14,9 +14,9 @@ module.exports.schema = Joi.object().keys({
     href: Joi.string().required(),
     paymentorder: Joi.object().keys({
         operation: Joi.string()
-            .valid('SetInstrument')
-            .required(),
-        instrument: Joi.string().required()
+            .valid('SetInstrument', 'Abort'),
+        instrument: Joi.string(),
+        abortReason: Joi.string()
     })
 });
 
