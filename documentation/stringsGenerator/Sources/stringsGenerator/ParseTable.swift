@@ -69,7 +69,10 @@ class ParseTable {
             print("Error count \(row.count): table is bad: \(next)\n\(row)")
             return nil
         }
-        let cleanedRow = row.map { String($0).trimmingCharacters(in: .whitespacesAndNewlines.union(.punctuationCharacters)) }
+        
+        //remove whitespace and citations, punctuations and exclamation marks are allowed
+        let citations = CharacterSet(charactersIn: "\"\'")
+        let cleanedRow = row.map { String($0).trimmingCharacters(in: .whitespacesAndNewlines.union(citations) ) }
         return LocalizationRow(key: cleanedRow[0], description: cleanedRow[1], english: cleanedRow[2], norwegian: cleanedRow[3], swedish: cleanedRow[4])
     }
     
