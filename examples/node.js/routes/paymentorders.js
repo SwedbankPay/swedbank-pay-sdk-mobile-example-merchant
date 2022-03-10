@@ -35,6 +35,7 @@ const paymentOrderSchema = Joi.object().keys({
     language: Joi.string()
         .required(),
     instrument: Joi.string(),
+    generateUnscheduledToken: Joi.boolean(),
     generateRecurrenceToken: Joi.boolean(),
         //not required in V3:  .required(),
     generatePaymentToken: Joi.boolean(),
@@ -68,18 +69,19 @@ const paymentOrderSchema = Joi.object().keys({
             .max(40)
     }).required(),
     payer: Joi.object({
-        //v3
+        
+        //v3 Starter
         requireConsumerInfo: Joi.boolean(),
         digitalProducts: Joi.boolean(),
         shippingAddressRestrictedToCountryCodes: Joi.array().items(Joi.string()),
         checkin: Joi.boolean(),
         gdprDataProcessingAgreement: Joi.boolean(),
 
-        //v2
+        //v2 + v3 PaymentsOnly
         consumerProfileRef: Joi.string(),
         email: Joi.string(),
         msisdn: Joi.string(),
-        payerReference: Joi.string(),
+        payerReference: Joi.string(),  
     }),
     orderItems: Joi.array().items(Joi.object({
         reference: Joi.string()
@@ -203,7 +205,7 @@ function checkPaymentOrder(req, paymentOrder) {
 function preparePaymentOrder(paymentOrder) {
     // Insert the payment order in our own database
     // to generate a unique reference for it.
-    const paymentId = global.database.insertPurchse(paymentOrder);
+    const paymentId = global.database.insertPurchase(paymentOrder);
     paymentOrder.payeeInfo.payeeId = global.config.merchantId;
     paymentOrder.payeeInfo.payeeReference = paymentId
 }

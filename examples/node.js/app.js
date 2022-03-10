@@ -36,6 +36,9 @@ const iosUniversalLinkCallback = require('./routes/ios-universal-link-callback.j
 const payerTokens = require('./routes/payer-tokens.js');
 const patchPayerToken = require('./routes/patch-payer-token.js');
 
+const expandResource = require('./routes/expand.js');
+const patchResource = require('./routes/patch.js');
+
 // Specify our routes
 app.get('/', index.route);
 app.post('/consumers', celebrate({ body: consumers.schema }),
@@ -54,6 +57,9 @@ app.get(constants.androidIntentCallbackPath, celebrate({ query: androidIntentCal
   androidIntentCallback.route);
 app.get(constants.iosUniversalLinkCallbackPath, celebrate({ query: iosUniversalLinkCallback.schema }),
   iosUniversalLinkCallback.route);
+
+app.post('/expand', celebrate({ body: expandResource.schema }), expandResource.route);
+app.patch('/patch',  celebrate({ body: patchResource.schema }), patchResource.route);
 
 // Handle the errors from Celebrate. Must be defined after the routes.
 app.use(celebrateProblems);

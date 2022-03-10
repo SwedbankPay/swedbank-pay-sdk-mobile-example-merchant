@@ -3,7 +3,7 @@
 name: Node integration tests
 
 # Run this workflow always 
-on: [push, pull_request, workflow_dispatch]
+on: [pull_request, workflow_dispatch]
 #on: workflow_dispatch
 
 jobs:
@@ -15,9 +15,9 @@ jobs:
         working-directory: ./examples/node.js
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up node
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: '16'
         cache: 'npm'
