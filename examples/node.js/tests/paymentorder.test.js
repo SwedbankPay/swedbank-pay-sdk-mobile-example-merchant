@@ -24,7 +24,7 @@ function checkCredentials(res) {
 }
 
 function printResult(res) {
-	console.log(JSON.stringify(JSON.parse(res.text), null, 4))
+	console.log(JSON.stringify(JSON.parse(res.text), null, 4));
 }
 
 describe('Post PaymentOrder v3', () => {
@@ -156,7 +156,7 @@ describe('Patch Instrument v3', () => {
 	//paymentOrder.paymentorder.generateRecurrenceToken = true
     //paymentOrder.paymentorder.generateUnscheduledToken = true
     // note that tokens are not compatible with all instruments
-    
+
 	chai.request(app)
 	  .post('/paymentorders')
 	  .set(headers)
@@ -164,16 +164,13 @@ describe('Patch Instrument v3', () => {
 	  .end((err, res) => {
 
 		checkCredentials(res);
-		if (res.status != 200) {
-			printResult(res)
-		}
-
+		
 		res.should.have.status(200);
 		res.body.should.be.a('object');
 
 		const href = findOperation(res.body, "set-instrument").href
 		if (!href) {
-			console.log("error! No operation!")
+			console.log("error! No operation!");
 		}
 
 		//Now patch this payment order!
@@ -183,7 +180,7 @@ describe('Patch Instrument v3', () => {
 				operation: "SetInstrument",
 				instrument: "Swish"
 			}
-		}
+		};
 
 		chai.request(app)
 		  .patch('/patch')
@@ -196,7 +193,56 @@ describe('Patch Instrument v3', () => {
 		  	res.should.have.status(200);
 
 			done();
-		})
+		});
+	 });
+	
+  })
+  .timeout(15 * 1000);  //usually it never takes more than one second
+});
+
+describe('Patch Abort', () => {
+  
+  it('Payment order should be aborted', (done) => {
+
+	const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
+
+	chai.request(app)
+	  .post('/paymentorders')
+	  .set(headers)
+	  .send(paymentOrder)
+	  .end((err, res) => {
+
+		checkCredentials(res);
+		
+		res.should.have.status(200);
+		res.body.should.be.a('object');
+
+		const href = findOperation(res.body, "abort").href
+		if (!href) {
+			console.log("error! No operation!");
+		}
+
+		//Now patch this payment order!
+		let params = {
+			href: href,
+			paymentorder: {
+				operation: "Abort",
+				abortReason: "AbortedByUser"
+			}
+		};
+
+		chai.request(app)
+		  .patch('/patch')
+		  .set(headers)
+		  .send(params)
+		  .end((err, res) => {
+
+		  	//console.log(res.text) 
+		  	//console.log(err)
+		  	res.should.have.status(200);
+
+			done();
+		});
 	 });
 	
   })
