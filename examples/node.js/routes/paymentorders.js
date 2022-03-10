@@ -207,7 +207,7 @@ function preparePaymentOrder(paymentOrder) {
     // to generate a unique reference for it.
     const paymentId = global.database.insertPurchase(paymentOrder);
     paymentOrder.payeeInfo.payeeId = global.config.merchantId;
-    paymentOrder.payeeInfo.payeeReference = paymentId
+    paymentOrder.payeeInfo.payeeReference = paymentId;
 }
 
 /**
@@ -229,7 +229,7 @@ module.exports.route = (req, res) => {
 
     preparePaymentOrder(paymentOrder);
 
-    post('/psp/paymentorders/', req.body)
+    post('/psp/paymentorders/', req.body, paymentOrder.userAgent)
         .then(pspResponse => {
             // payeeReference is our paymentId,
             // as set in preparePaymentOrder
