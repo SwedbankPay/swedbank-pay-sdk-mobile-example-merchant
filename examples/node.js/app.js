@@ -38,6 +38,7 @@ const patchPayerToken = require('./routes/patch-payer-token.js');
 
 const expandResource = require('./routes/expand.js');
 const patchResource = require('./routes/patch.js');
+const purchaseTokens = require('./routes/purchase-tokens.js');
 
 // Specify our routes
 app.get('/', index.route);
@@ -60,6 +61,7 @@ app.get(constants.iosUniversalLinkCallbackPath, celebrate({ query: iosUniversalL
 
 app.post('/expand', celebrate({ body: expandResource.schema }), expandResource.route);
 app.patch('/patch',  celebrate({ body: patchResource.schema }), patchResource.route);
+app.post('/tokens',  celebrate({ body: purchaseTokens.schema }), purchaseTokens.route);
 
 // Handle the errors from Celebrate. Must be defined after the routes.
 app.use(celebrateProblems);
