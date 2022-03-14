@@ -11,10 +11,12 @@ pull_request_rules:
       - author~=^dependabot(|-preview)\[bot\]$
       #- files~=^examples/node.js/package.*$ #uncomment if you want this for java as well!
       - '#commits-behind=0' # Only merge up to date pull requests
-      - check-success=connected_check
+      - check-success=Java CI with Gradle
+      - check-success=Java integration tests
+      - check-success=Node integration tests
       - check-success=Codacy Static Code Analysis
       - check-success=license/cla
-      - check-success=build
     actions:
       merge:
         method: merge
+        
