@@ -17,14 +17,30 @@ module.exports.schema = Joi.object().keys({
 module.exports.route = async (req, res) => {
     try {
 
+        // to get the tokens you need to expand the /paid resource of the payment.
         const orderID = req.body.href;
         const response = await get(orderID);
         /*
-        if (!response.paymentOrder.recurrenceToken) {
+        "tokens": [
+            {
+                "type": "recurrence",
+                "token": "a7d7d780-98ba-4466-befe-e5428f716c30",
+                "name": "458109******3517",
+                "expiryDate": "12/2030"
+            },
+            {
+                "type": "unscheduled",
+                "token": "0c43b168-dcd5-45d1-b9c4-1fb8e273c799",
+                "name": "458109******3517",
+                "expiryDate": "12/2030"
+            }
+        ],
+        */
+
+        if (!response.paid.tokens) {
             res.status(500).send({ error: "No recurrenceToken in response", paymentOrder: response.paymentOrder }).end();
             return;
         }
-*/
         res.status(200).send(response).end();
     } catch (e) {
         console.log('Failed to get payer owned tokens');
