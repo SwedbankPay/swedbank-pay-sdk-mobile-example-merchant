@@ -28,6 +28,7 @@ They are returned as part of a paid expansion result, and looks like this:
 // Getting token status requires a get on the  
 module.exports.schema = Joi.object().keys({
     resource: Joi.string().required(),
+    expand: Joi.string()
 });
 
 module.exports.route = async (req, res) => {
@@ -37,7 +38,7 @@ module.exports.route = async (req, res) => {
         req.body.expand = "paid";
         const response = await expandResource.expand(req, res);
 
-        let tokens = response && response.paid && response.paid.tokens;
+        let tokens = response && response.paymentOrder && response.paymentOrder.paid && response.paymentOrder.paid.tokens;
         if (!tokens || tokens.length === 0) {
             res.status(500).send({ error: "No recurrence or unscheduled token in response", paymentOrder: response.paymentOrder }).end();
             return;

@@ -20,7 +20,7 @@ const expand = async (req, res) => {
     const expand = req.body.expand;
     
     return await get(`${resource}?$expand=${expand}`);
-}
+};
 
 module.exports.expand = expand;
 

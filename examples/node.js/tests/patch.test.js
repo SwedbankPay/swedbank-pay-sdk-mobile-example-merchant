@@ -137,7 +137,7 @@ describe('Verify and get tokens', () => {
   
   it('Verify operation should give you tokens', (done) => {
 
-	let href = "/psp/paymentorders/9ae64dd8-c941-445a-728f-08da00e613b8/paid"
+	let href = "/psp/paymentorders/9ae64dd8-c941-445a-728f-08da00e613b8"
 
 	chai.request(app)
 	  .post('/tokens')
@@ -158,4 +158,5 @@ describe('Verify and get tokens', () => {
   })
   .timeout(15 * 1000);  //usually it never takes more than one second
 });
+
 */
