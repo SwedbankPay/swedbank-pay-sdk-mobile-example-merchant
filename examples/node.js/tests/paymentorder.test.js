@@ -131,10 +131,10 @@ describe('Expand payer in a v3 payment order', () => {
 	chai.request(app)
 	  .post("/expand") 
 	  .set(headers)
-	  .send({ resource: "/psp/paymentorders/d63f8079-01d9-499e-6f7d-08d9f03a45d6", expand: "payer" })
+	  .send({ resource: "/psp/paymentorders/d63f8079-01d9-499e-6f7d-08d9f03a45d6", expand: ["payer", "urls", "history"] })
 	  .end((err, res) => {
 
-		//console.log(res.body.paymentOrder.payer)
+		printResult(res);
 		checkCredentials(res);
 
 		res.should.have.status(200);

@@ -133,16 +133,17 @@ describe('Patch Abort', () => {
 
 /*
 One cannot build unit-tests for verifying tokens since they need a user-authentication step, but here is what it would look like if already done:
+
 describe('Verify and get tokens', () => {
   
   it('Verify operation should give you tokens', (done) => {
 
-	let href = "/psp/paymentorders/9ae64dd8-c941-445a-728f-08da00e613b8"
-
+	let resource = "/psp/paymentorders/9ae64dd8-c941-445a-728f-08da00e613b8";
+	const expand = ["some"];
 	chai.request(app)
 	  .post('/tokens')
 	  .set(headers)
-	  .send({ resource: href })
+	  .send({ resource, expand })
 	  .end((err, res) => {
 
 	  	printResult(res)

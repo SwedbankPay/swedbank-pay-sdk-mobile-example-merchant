@@ -28,7 +28,7 @@ They are returned as part of a paid expansion result, and looks like this:
 // Getting token status requires a get on the  
 module.exports.schema = Joi.object().keys({
     resource: Joi.string().required(),
-    expand: Joi.string()
+    expand: Joi.alternatives().try(Joi.object(), Joi.array(), Joi.string())
 });
 
 module.exports.route = async (req, res) => {
