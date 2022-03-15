@@ -131,3 +131,31 @@ describe('Patch Abort', () => {
   .timeout(15 * 1000);  //usually it never takes more than one second
 });
 
+/*
+One cannot build unit-tests for verifying tokens since they need a user-authentication step, but here is what it would look like if already done:
+describe('Verify and get tokens', () => {
+  
+  it('Verify operation should give you tokens', (done) => {
+
+	let href = "/psp/paymentorders/9ae64dd8-c941-445a-728f-08da00e613b8/paid"
+
+	chai.request(app)
+	  .post('/tokens')
+	  .set(headers)
+	  .send({ resource: href })
+	  .end((err, res) => {
+
+	  	printResult(res)
+
+			checkCredentials(res);
+			
+			res.should.have.status(200);
+			res.body.should.be.a('object');
+
+			done();
+	 });
+	
+  })
+  .timeout(15 * 1000);  //usually it never takes more than one second
+});
+*/
