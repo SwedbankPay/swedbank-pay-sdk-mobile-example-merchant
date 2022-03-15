@@ -8,7 +8,6 @@
     "description": "Order 12345678",
     "userAgent": "SwedbankPaySDK-Android/1.0",
     "language": "en-US",
-    "instrument": "CreditCard", 
     "generateRecurrenceToken": false,
     "urls": {
       "hostUrls": [
