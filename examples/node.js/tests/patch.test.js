@@ -50,7 +50,7 @@ describe('Patch Instrument v3', () => {
 		res.should.have.status(200);
 		res.body.should.be.a('object');
 
-		const href = findOperation(res.body, "set-instrument").href
+		const href = findOperation(res.body, "set-instrument").href;
 		if (!href) {
 			console.log("error! No operation!");
 		}
@@ -99,7 +99,7 @@ describe('Patch Abort', () => {
 		res.should.have.status(200);
 		res.body.should.be.a('object');
 
-		const href = findOperation(res.body, "abort").href
+		const href = findOperation(res.body, "abort").href;
 		if (!href) {
 			console.log("error! No operation!");
 		}

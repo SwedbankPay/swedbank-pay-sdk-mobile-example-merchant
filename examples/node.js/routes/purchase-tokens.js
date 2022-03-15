@@ -37,7 +37,7 @@ module.exports.route = async (req, res) => {
         const response = await get(orderID);
 
         let tokens = response && response.paid && response.paid.tokens;
-        if (!tokens || tokens.length == 0) {
+        if (!tokens || tokens.length === 0) {
             res.status(500).send({ error: "No recurrence or unscheduled token in response", paymentOrder: response.paymentOrder }).end();
             return;
         }
