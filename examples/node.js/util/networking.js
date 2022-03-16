@@ -44,14 +44,14 @@ const getJsonOrThrowProblem = async (response) => {
  * @returns {object} Promise whose then() gets a single parameter that is the
  * server response as a parsed object representing the JSON response content.
  */
-const request = async (method, path, body) => {
+const request = async (method, path, body, userAgent) => {
     const baseUrl = process.env.SWEDBANKPAY_SERVER_BASE_URL ||
         global.config.payexBaseUrl;
     const url = `${baseUrl}${path}`;
-    return await requestUrl(method, url, body);
+    return await requestUrl(method, url, body, userAgent);
 }
 
-async function requestUrl(method, url, body) {
+async function requestUrl(method, url, body, userAgent) {
     const opts = {
         method: method,
         compress: false,
@@ -60,6 +60,9 @@ async function requestUrl(method, url, body) {
             'Authorization': `Bearer ${global.config.merchantToken}`
         }
     };
+    if (userAgent) {
+        opts.headers["User-Agent"] = userAgent
+    }
 
     if (body) {
         opts.headers['Content-Type'] = 'application/json';
@@ -92,8 +95,8 @@ async function requestUrl(method, url, body) {
  * @returns {object} Promise whose then() gets a single parameter that is the
  * server response as a parsed object representing the JSON response content.
  */
-module.exports.post = async (path, body) => {
-    return await request('post', path, body);
+module.exports.post = async (path, body, userAgent) => {
+    return await request('post', path, body, userAgent);
 };
 
 /**

@@ -131,10 +131,10 @@ describe('Expand payer in a v3 payment order', () => {
 	chai.request(app)
 	  .post("/expand") 
 	  .set(headers)
-	  .send({ resource: "/psp/paymentorders/d63f8079-01d9-499e-6f7d-08d9f03a45d6", expand: "payer" })
+	  .send({ resource: "/psp/paymentorders/d63f8079-01d9-499e-6f7d-08d9f03a45d6", expand: ["payer", "urls", "history"] })
 	  .end((err, res) => {
 
-		//console.log(res.body.paymentOrder.payer)
+		printResult(res);
 		checkCredentials(res);
 
 		res.should.have.status(200);
@@ -146,105 +146,3 @@ describe('Expand payer in a v3 payment order', () => {
   .timeout(15 * 1000);  //usually it never takes more than one second
 });
 */
-
-describe('Patch Instrument v3', () => {
-  
-  it('Payment order should be patched with a new Instrument', (done) => {
-
-	const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
-
-	//paymentOrder.paymentorder.generateRecurrenceToken = true
-    //paymentOrder.paymentorder.generateUnscheduledToken = true
-    // note that tokens are not compatible with all instruments
-
-	chai.request(app)
-	  .post('/paymentorders')
-	  .set(headers)
-	  .send(paymentOrder)
-	  .end((err, res) => {
-
-		checkCredentials(res);
-		
-		res.should.have.status(200);
-		res.body.should.be.a('object');
-
-		const href = findOperation(res.body, "set-instrument").href
-		if (!href) {
-			console.log("error! No operation!");
-		}
-
-		//Now patch this payment order!
-		let params = {
-			href: href,
-			paymentorder: {
-				operation: "SetInstrument",
-				instrument: "Swish"
-			}
-		};
-
-		chai.request(app)
-		  .patch('/patch')
-		  .set(headers)
-		  .send(params)
-		  .end((err, res) => {
-
-		  	//console.log(res.text) 
-		  	//console.log(err)
-		  	res.should.have.status(200);
-
-			done();
-		});
-	 });
-	
-  })
-  .timeout(15 * 1000);  //usually it never takes more than one second
-});
-
-describe('Patch Abort', () => {
-  
-  it('Payment order should be aborted', (done) => {
-
-	const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
-
-	chai.request(app)
-	  .post('/paymentorders')
-	  .set(headers)
-	  .send(paymentOrder)
-	  .end((err, res) => {
-
-		checkCredentials(res);
-		
-		res.should.have.status(200);
-		res.body.should.be.a('object');
-
-		const href = findOperation(res.body, "abort").href
-		if (!href) {
-			console.log("error! No operation!");
-		}
-
-		//Now patch this payment order!
-		let params = {
-			href: href,
-			paymentorder: {
-				operation: "Abort",
-				abortReason: "AbortedByUser"
-			}
-		};
-
-		chai.request(app)
-		  .patch('/patch')
-		  .set(headers)
-		  .send(params)
-		  .end((err, res) => {
-
-		  	//console.log(res.text) 
-		  	//console.log(err)
-		  	res.should.have.status(200);
-
-			done();
-		});
-	 });
-	
-  })
-  .timeout(15 * 1000);  //usually it never takes more than one second
-});
