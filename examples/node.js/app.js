@@ -19,6 +19,8 @@ global.database = new Database();
 // Import middlewares
 const auth = require('./auth_middleware.js');
 app.use(auth);
+const agent = require('./agent_middleware.js');
+app.use(agent);
 
 // Enable parsing request bodies
 app.use(express.json());

@@ -164,7 +164,7 @@ const paymentOrderSchema = Joi.object().keys({
     }),
     disablePaymentMenu: Joi.boolean(),
     paymentToken: Joi.string(),
-    initiatingSystemUserAgent: Joi.string()
+    initiatingSystemUserAgent: Joi.string() //this is not part of the request and will be removed in the future
 });
 
 /**
@@ -229,7 +229,7 @@ module.exports.route = (req, res) => {
 
     preparePaymentOrder(paymentOrder);
 
-    post('/psp/paymentorders/', req.body, paymentOrder.userAgent)
+    post('/psp/paymentorders/', req.body)
         .then(pspResponse => {
             // payeeReference is our paymentId,
             // as set in preparePaymentOrder
