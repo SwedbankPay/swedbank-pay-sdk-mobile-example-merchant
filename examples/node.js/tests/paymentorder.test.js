@@ -14,13 +14,14 @@ chai.should();
 
 const env = process.env;
 let headers = { 
-  Accept: 'application/json', 
-  [constants.apiKeyHeaderName]: [env["API_KEY"]],
-  [constants.accessTokenHeaderName]: "doot_doot",
+	"User-Agent": "NodeTestSuite/3.0",
+	Accept: 'application/json', 
+	[constants.apiKeyHeaderName]: [env["API_KEY"]],
+	[constants.accessTokenHeaderName]: "doot_doot",
 };
 
 function checkCredentials(res) {
-  chai.assert(res.status != 401, "Getting 401, is the credentials missing?\n" + res.text);
+	chai.assert(res.status != 401, "Getting 401, is the credentials missing?\n" + res.text);
 }
 
 function printResult(res) {
@@ -28,73 +29,70 @@ function printResult(res) {
 }
 
 describe('Post PaymentOrder v3', () => {
-  
-  it('Payment order should be accepted', (done) => {
 
-	const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
+	it('Payment order should be accepted', (done) => {
 
-	chai.request(app)
-	  .post('/paymentorders')
-	  .set(headers)
-	  .send(paymentOrder)
-	  .end((err, res) => {
+		const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
 
-		//console.log(res.text)
-		checkCredentials(res);
+		chai.request(app)
+		.post('/paymentorders')
+		.set(headers)
+		.send(paymentOrder)
+		.end((err, res) => {
 
-		res.should.have.status(200);
-		res.body.should.be.a('object');
-		done();
-	 });
-	
-  })
-  .timeout(15 * 1000);  //usually it never takes more than one second
+			//console.log(res.text)
+			checkCredentials(res);
+
+			res.should.have.status(200);
+			res.body.should.be.a('object');
+			done();
+		});
+	})
+  	.timeout(15 * 1000);  //usually it never takes more than one second
 });
 
 describe('Handle bad formatted PaymentOrder', () => {
-  
-  it('Payment order should NOT be accepted', (done) => {
 
-	let paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
-	paymentOrder.paymentorder.operation = "invalid setting";
-	chai.request(app)
-	  .post('/paymentorders')
-	  .set(headers)
-	  .send(paymentOrder)
-	  .end((err, res) => {
+	it('Payment order should NOT be accepted', (done) => {
 
-		//console.log(res.text)
+		let paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v3.json").toString());
+		paymentOrder.paymentorder.operation = "invalid setting";
+		chai.request(app)
+		.post('/paymentorders')
+		.set(headers)
+		.send(paymentOrder)
+		.end((err, res) => {
 
-		checkCredentials(res);
-		res.should.have.status(400);
-		res.body.should.be.a('object');
-		done();
-	 });
-  })
-  .timeout(15 * 1000);  //usually it never takes more than one second
+			//console.log(res.text)
+
+			checkCredentials(res);
+			res.should.have.status(400);
+			res.body.should.be.a('object');
+			done();
+		});
+	})
+	.timeout(15 * 1000);  //usually it never takes more than one second
 });
 
 describe('Post PaymentOrder v2', () => {
-  
-  it('Payment order should be accepted', (done) => {
 
-	const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v2.json").toString());
-	chai.request(app)
-	  .post('/paymentorders')
-	  .set(headers)
-	  .send(paymentOrder)
-	  .end((err, res) => {
+	it('Payment order should be accepted', (done) => {
 
-		checkCredentials(res);
-		res.should.have.status(200);
-		res.body.should.be.a('object');
-		done();
-	 });
-	
-  })
+		const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v2.json").toString());
+		chai.request(app)
+		.post('/paymentorders')
+		.set(headers)
+		.send(paymentOrder)
+		.end((err, res) => {
+
+			checkCredentials(res);
+			res.should.have.status(200);
+			res.body.should.be.a('object');
+			done();
+		});
+	})
   .timeout(15 * 1000);  //usually it never takes more than one second
 });
-
 
 
 /**
@@ -124,6 +122,7 @@ describe('Post PaymentOrder v3 with checkin', () => {
   .timeout(15 * 1000);  //usually it never takes more than one second
 });
 
+
 describe('Expand payer in a v3 payment order', () => {
   
   it('Payer should be expanded', (done) => {
@@ -131,15 +130,15 @@ describe('Expand payer in a v3 payment order', () => {
 	chai.request(app)
 	  .post("/expand") 
 	  .set(headers)
-	  .send({ resource: "/psp/paymentorders/d63f8079-01d9-499e-6f7d-08d9f03a45d6", expand: ["payer", "urls", "history"] })
+	  .send({ resource: "/psp/paymentorders/567ef38b-3704-444d-7082-08da05b8e84b", expand: ["paid", "failedAttempts", "failed", "history"] })
 	  .end((err, res) => {
 
-		printResult(res);
-		checkCredentials(res);
+			printResult(res);
+			checkCredentials(res);
 
-		res.should.have.status(200);
-		res.body.should.be.a('object');
-		done();
+			res.should.have.status(200);
+			res.body.should.be.a('object');
+			done();
 	 });
 	
   })

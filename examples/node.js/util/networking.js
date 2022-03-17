@@ -44,14 +44,14 @@ const getJsonOrThrowProblem = async (response) => {
  * @returns {object} Promise whose then() gets a single parameter that is the
  * server response as a parsed object representing the JSON response content.
  */
-const request = async (method, path, body, userAgent) => {
+const request = async (method, path, body) => {
     const baseUrl = process.env.SWEDBANKPAY_SERVER_BASE_URL ||
         global.config.payexBaseUrl;
     const url = `${baseUrl}${path}`;
-    return await requestUrl(method, url, body, userAgent);
+    return await requestUrl(method, url, body);
 }
 
-async function requestUrl(method, url, body, userAgent) {
+async function requestUrl(method, url, body) {
     const opts = {
         method: method,
         compress: false,
@@ -60,8 +60,8 @@ async function requestUrl(method, url, body, userAgent) {
             'Authorization': `Bearer ${global.config.merchantToken}`
         }
     };
-    if (userAgent) {
-        opts.headers["User-Agent"] = userAgent
+    if (global.userAgent) {
+        opts.headers["User-Agent"] = global.userAgent;
     }
 
     if (body) {
@@ -95,8 +95,8 @@ async function requestUrl(method, url, body, userAgent) {
  * @returns {object} Promise whose then() gets a single parameter that is the
  * server response as a parsed object representing the JSON response content.
  */
-module.exports.post = async (path, body, userAgent) => {
-    return await request('post', path, body, userAgent);
+module.exports.post = async (path, body) => {
+    return await request('post', path, body);
 };
 
 /**
