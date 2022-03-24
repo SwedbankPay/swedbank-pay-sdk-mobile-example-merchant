@@ -9,8 +9,10 @@
  */
 const agent = (req, res, next) => {
 
-    let userAgent = req.headers["user-agent"] || req.headers["User-Agent"];
-    if (userAgent) {
+    const userAgent = req.headers["user-agent"] || req.headers["User-Agent"] || req.headers["User-agent"];
+    if (userAgent && userAgent.includes("SwedbankPaySDK")) {
+        // always give information on which SDK is used, just forward it from the client to Swedbank.
+        //console.log(`userAgent: ${userAgent}`);
         global.userAgent = userAgent;
     }
     next();
