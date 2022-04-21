@@ -14,7 +14,7 @@ chai.should();
 
 const env = process.env;
 let headers = { 
-	"User-Agent": "NodeTestSuite/3.0",
+	"User-Agent": "SwedbankPaySDK-NodeTestSuite/3.0",
 	Accept: 'application/json', 
 	[constants.apiKeyHeaderName]: [env["API_KEY"]],
 	[constants.accessTokenHeaderName]: "doot_doot",
@@ -40,7 +40,7 @@ describe('Post PaymentOrder v3', () => {
 		.send(paymentOrder)
 		.end((err, res) => {
 
-			//console.log(res.text)
+			//printResult(res)
 			checkCredentials(res);
 
 			res.should.have.status(200);
