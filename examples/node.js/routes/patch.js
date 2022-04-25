@@ -2,6 +2,7 @@
 
 const { Joi } = require('celebrate');
 const { patchUrl, sendError } = require('../util/networking.js');
+const { makeUnauthorizedProblem } = require('../util/problems.js');
 
 /**
  * General patch operations for all supported by the example backend under V3. 
@@ -20,15 +21,30 @@ module.exports.schema = Joi.object().keys({
     })
 });
 
+async function authorize(req) {
+    // To allow, add "allowPatchResource": true to appconfig.json
+    // A real implementation must do access control to only allow a user to access their own data.
+    if (!global.config.allowPatchResource) {
+        throw makeUnauthorizedProblem();
+    }
+}
+
 module.exports.route = async (req, res) => {
     try {
+        
+        await authorize(req);
+        
         let href = new URL(req.body.href);
-
-        // No purpose in trying to restrict by known ids. 
-        //const paymentId = href.pathname;
+        
+        // Only allow patching known ids.
+        // In a real-world application, only the same user may patch their own payments.
+        const paymentId = href.pathname;
         //console.log(`Setting instrument of ${paymentId} to ${req.body.paymentorder.instrument}.`);
-        //const swedbankPayId = global.database.findPspPurchaseId(paymentId);
+        const swedbankPayId = global.database.findPspPurchaseId(paymentId);
         //console.log(`Payex id ${swedbankPayId}.`);
+        if (!swedbankPayId) {
+            throw makeUnauthorizedProblem();
+        }
 
         const body = {
             paymentorder: req.body.paymentorder
