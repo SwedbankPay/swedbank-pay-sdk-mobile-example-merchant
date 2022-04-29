@@ -1,4 +1,8 @@
 {
+  "allowPatchResource": true,
+  "allowExpandFullResource": true,
+  "allowUsePaymentToken": true,
+  "allowGetPayerOwnedPaymentTokens": true,
   "apiKey": "<any-string-here-you-want-to-use>",
   "merchantToken": "<your-merchant-token-from-swedbank>",
   "merchantId": "<your-merchant-id-from-swedbank>",
