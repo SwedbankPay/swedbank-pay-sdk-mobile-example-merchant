@@ -1,0 +1,22 @@
+pull_request_rules:
+  - name: Automatic approve on Dependabot PR
+    conditions:
+      - author~=^dependabot(|-preview)\[bot\]$
+    actions:
+      review:
+        type: APPROVE
+
+  - name: Automatically merge Dependabot PR
+    conditions:
+      - author~=^dependabot(|-preview)\[bot\]$
+      #- files~=^examples/node.js/package.*$ #uncomment if you want this for java as well!
+      - '#commits-behind=0' # Only merge up to date pull requests
+      - check-success=Java CI with Gradle
+      - check-success=Java integration tests
+      - check-success=Node integration tests
+      - check-success=Codacy Static Code Analysis
+      - check-success=license/cla
+    actions:
+      merge:
+        method: merge
+        

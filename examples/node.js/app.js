@@ -19,6 +19,8 @@ global.database = new Database();
 // Import middlewares
 const auth = require('./auth_middleware.js');
 app.use(auth);
+const agent = require('./agent_middleware.js');
+app.use(agent);
 
 // Enable parsing request bodies
 app.use(express.json());
@@ -35,6 +37,10 @@ const androidIntentCallback = require('./routes/android-intent-callback.js');
 const iosUniversalLinkCallback = require('./routes/ios-universal-link-callback.js');
 const payerTokens = require('./routes/payer-tokens.js');
 const patchPayerToken = require('./routes/patch-payer-token.js');
+
+const expandResource = require('./routes/expand.js');
+const patchResource = require('./routes/patch.js');
+const purchaseTokens = require('./routes/purchase-tokens.js');
 
 // Specify our routes
 app.get('/', index.route);
@@ -54,6 +60,10 @@ app.get(constants.androidIntentCallbackPath, celebrate({ query: androidIntentCal
   androidIntentCallback.route);
 app.get(constants.iosUniversalLinkCallbackPath, celebrate({ query: iosUniversalLinkCallback.schema }),
   iosUniversalLinkCallback.route);
+
+app.post('/expand', celebrate({ body: expandResource.schema }), expandResource.route);
+app.patch('/patch',  celebrate({ body: patchResource.schema }), patchResource.route);
+app.post('/tokens',  celebrate({ body: purchaseTokens.schema }), purchaseTokens.route);
 
 // Handle the errors from Celebrate. Must be defined after the routes.
 app.use(celebrateProblems);

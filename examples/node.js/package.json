@@ -8,17 +8,20 @@
     "url": "git@github.com:SwedbankPay/swedbank-pay-sdk-mobile-example-merchant.git"
   },
   "dependencies": {
-    "celebrate": "^14.0.0",
+    "celebrate": "^15.0.1",
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
     "content-type-parser": "^1.0.2",
-    "express": "^4.17.1",
-    "node-fetch": "^2.6.1",
+    "express": "^4.18.1",
+    "mocha": "^10.0.0",
+    "node-fetch": "^3.2.4",
     "problem-json": "^0.3.0"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start-dev": "nodemon app.js",
+    "test": "mocha tests/*.js --exit"
   },
   "keywords": [
     "node",

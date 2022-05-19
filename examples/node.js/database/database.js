@@ -8,7 +8,7 @@ module.exports = class Database {
         this.idSequence = new Date().getTime();
 
         // Contains our "database" as an in-memory map ID => purchaseData
-        this.db = {};
+        this.db = { pspId: {} };
     }
 
     /**
@@ -17,7 +17,7 @@ module.exports = class Database {
      * @param purchase {object} the purchase data
      * @returns {number} ID allocated for the new purchase
      */
-    insertPurchse(purchase) {
+    insertPurchase(purchase) {
         // Get an ID for the purchase from our ID sequence
         const id = this.idSequence++;
 
@@ -34,6 +34,7 @@ module.exports = class Database {
      */
     insertPurchaseIdMapping(purchaseId, pspPurchaseId) {
         this.db[purchaseId].pspPurchaseId = pspPurchaseId;
+        this.db.pspId[pspPurchaseId] = purchaseId;
     }
 
     /**
@@ -46,7 +47,12 @@ module.exports = class Database {
         return this.db[purchaseId];
     }
 
-    findPspPurchaseId(purchaseId) {
-        return this.db[purchaseId].pspPurchaseId;
+    findPspPurchaseId(someId) {
+
+        let purchase = this.db.pspId[someId];
+        if (purchase) {
+            return purchase;
+        }
+        return this.db[someId].pspPurchaseId;
     }
 };
