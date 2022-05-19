@@ -82,6 +82,12 @@ const paymentOrderSchema = Joi.object().keys({
         email: Joi.string(),
         msisdn: Joi.string(),
         payerReference: Joi.string(),  
+        
+        // Enterprise
+        nationalIdentifier: Joi.object({
+           socialSecurityNumber: Joi.string(),
+           countryCode: Joi.string()
+        }),
     }),
     orderItems: Joi.array().items(Joi.object({
         reference: Joi.string()
