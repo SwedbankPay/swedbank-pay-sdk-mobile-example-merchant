@@ -31,9 +31,7 @@ async function authorize(req) {
 
 module.exports.route = async (req, res) => {
     try {
-        
         await authorize(req);
-        
         let href = new URL(req.body.href);
         
         // Only allow patching known ids.
@@ -45,7 +43,7 @@ module.exports.route = async (req, res) => {
         if (!swedbankPayId) {
             throw makeUnauthorizedProblem();
         }
-
+        
         const body = {
             paymentorder: req.body.paymentorder
         };
@@ -53,7 +51,7 @@ module.exports.route = async (req, res) => {
         res.status(200).send(swedbankPayResponse).end();
         
     } catch (e) {
-        console.log('Failed to set paymentorder instrument');
+        console.log('Failed to patch paymentorder');
         console.log(e);
         sendError(res, e);
     }
