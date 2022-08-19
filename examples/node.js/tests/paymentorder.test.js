@@ -4,6 +4,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const fs = require("fs");
 const findOperation = require('../util/find-operation.js');
+const testHelpers = require('../util/test-helpers.js');
 
 const paymentorders = require('../routes/paymentorders.js');
 const { celebrate, Joi, errors, Segments } = require('celebrate');
@@ -11,22 +12,6 @@ const { celebrate, Joi, errors, Segments } = require('celebrate');
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
-
-const env = process.env;
-let headers = { 
-	"User-Agent": "SwedbankPaySDK-NodeTestSuite/3.0",
-	Accept: 'application/json', 
-	[constants.apiKeyHeaderName]: [env["API_KEY"]],
-	[constants.accessTokenHeaderName]: "doot_doot",
-};
-
-function checkCredentials(res) {
-	chai.assert(res.status != 401, "Getting 401, is the credentials missing?\n" + res.text);
-}
-
-function printResult(res) {
-	console.log(JSON.stringify(JSON.parse(res.text), null, 4));
-}
 
 describe('Post PaymentOrder v3', () => {
 
@@ -36,12 +21,12 @@ describe('Post PaymentOrder v3', () => {
 
 		chai.request(app)
 		.post('/paymentorders')
-		.set(headers)
+		.set(testHelpers.headers)
 		.send(paymentOrder)
 		.end((err, res) => {
 
-			//printResult(res)
-			checkCredentials(res);
+			//testHelpers.printResult(res)
+			testHelpers.checkCredentials(res);
 
 			res.should.have.status(200);
 			res.body.should.be.a('object');
@@ -59,13 +44,13 @@ describe('Handle bad formatted PaymentOrder', () => {
 		paymentOrder.paymentorder.operation = "invalid setting";
 		chai.request(app)
 		.post('/paymentorders')
-		.set(headers)
+		.set(testHelpers.headers)
 		.send(paymentOrder)
 		.end((err, res) => {
 
 			//console.log(res.text)
 
-			checkCredentials(res);
+			testHelpers.checkCredentials(res, false);
 			res.should.have.status(400);
 			res.body.should.be.a('object');
 			done();
@@ -81,11 +66,11 @@ describe('Post PaymentOrder v2', () => {
 		const paymentOrder = JSON.parse(fs.readFileSync("tests/paymentOrderRequest_v2.json").toString());
 		chai.request(app)
 		.post('/paymentorders')
-		.set(headers)
+		.set(testHelpers.headers)
 		.send(paymentOrder)
 		.end((err, res) => {
 
-			checkCredentials(res);
+			testHelpers.checkCredentials(res);
 			res.should.have.status(200);
 			res.body.should.be.a('object');
 			done();
@@ -106,12 +91,12 @@ describe('Post PaymentOrder v3 with checkin', () => {
 
 	chai.request(app)
 	  .post('/paymentorders')
-	  .set(headers)
+	  .set(testHelpers.headers)
 	  .send(paymentOrder)
 	  .end((err, res) => {
 
 		//console.log(res.text + "\n(result from test)\n")
-		checkCredentials(res);
+		testHelpers.checkCredentials(res);
 
 		res.should.have.status(200);
 		res.body.should.be.a('object');
@@ -129,12 +114,12 @@ describe('Expand payer in a v3 payment order', () => {
 
 	chai.request(app)
 	  .post("/expand") 
-	  .set(headers)
+	  .set(testHelpers.headers)
 	  .send({ resource: "/psp/paymentorders/567ef38b-3704-444d-7082-08da05b8e84b", expand: ["paid", "failedAttempts", "failed", "history"] })
 	  .end((err, res) => {
 
-			printResult(res);
-			checkCredentials(res);
+			testHelpers.printResult(res);
+			testHelpers.checkCredentials(res);
 
 			res.should.have.status(200);
 			res.body.should.be.a('object');
