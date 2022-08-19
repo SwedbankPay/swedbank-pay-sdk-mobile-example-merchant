@@ -7,10 +7,6 @@ updates:
     time: "03:00"
     timezone: Europe/Oslo
   open-pull-requests-limit: 99
-  reviewers:
-  - jnordenswan
-  assignees:
-  - jnordenswan
 - package-ecosystem: npm
   directory: "/examples/node.js"
   schedule:
@@ -20,7 +16,6 @@ updates:
   open-pull-requests-limit: 99
   reviewers:
   - OlofT
-  - jnordenswan
   assignees:
   - OlofT
 - package-ecosystem: github-actions
