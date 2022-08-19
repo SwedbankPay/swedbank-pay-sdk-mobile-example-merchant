@@ -16,7 +16,6 @@ function checkCredentials(res, shouldBeSucceeding = true) {
 	chai.assert(res.status != 401, "Getting 401, is the credentials missing?\n" + res.text);
 	if (res.status != 200 && shouldBeSucceeding) {
 		console.log("baseUrl: " + baseUrl)
-		printResult(res)
 	}
 }
 

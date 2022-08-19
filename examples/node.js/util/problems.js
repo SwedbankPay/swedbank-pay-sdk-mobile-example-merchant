@@ -54,6 +54,7 @@ function celebrateProblems(err, req, res, next) {
  * @returns a problem-json Document representing the error
  */
 function makeBadGatewayProblem(response, body) {
+    
     const extension = new problemJson.Extension({
         gatewayStatus: response.status,
         body: body
