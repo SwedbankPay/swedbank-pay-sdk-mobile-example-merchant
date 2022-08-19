@@ -55,10 +55,6 @@ function celebrateProblems(err, req, res, next) {
  */
 function makeBadGatewayProblem(response, body) {
     
-    console.log(JSON.stringify(JSON.parse(response), null, 4));
-    console.log("body")
-    console.log(JSON.stringify(JSON.parse(body), null, 4));
-    
     const extension = new problemJson.Extension({
         gatewayStatus: response.status,
         body: body
