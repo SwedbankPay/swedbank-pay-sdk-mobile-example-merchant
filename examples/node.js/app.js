@@ -12,6 +12,10 @@ global.config = require('./appconfig.json');
 // Patch it from environment variables
 setConfigFromEnv(global.config);
 
+
+const applePayDomainAssoc = require('./routes/apple-pay-domain-association.js');
+app.get(constants.applePayMechantDomainAssociationPath, applePayDomainAssoc.route);
+
 // Instantiate our Database
 const Database = require('./database/database.js');
 global.database = new Database();
@@ -53,6 +57,7 @@ app.patch('/paymentorders/:id/setInstrument', celebrate({ body: setInstrument.sc
 app.get('/payers/:ref/paymentTokens', payerTokens.route);
 app.patch('/payers/:ref/paymentTokens/:token', celebrate({ body: patchPayerToken.schema }),
   patchPayerToken.route);
+
 app.get(constants.appleAppSiteAssociationPath, appleAssoc.route);
 app.get(constants.sdkCallbackReloadPath, celebrate({ query: callbackReload.schema }),
   callbackReload.route);

@@ -128,6 +128,21 @@ describe('Patch Abort', () => {
   	.timeout(15 * 1000);  //usually it never takes more than one second
 });
 
+describe('Fetch domain association file', () => {
+	it('File gets downloaded', (done) => {
+		chai.request(app)
+	  .get('/.well-known/apple-developer-merchantid-domain-association')
+	  .end((err, res) => {
+
+			console.log(res.text)
+			done();
+	 });
+	
+  })
+});
+
+
+
 /*
 One cannot build unit-tests for verifying tokens since they need a user-authentication step, but here is what it would look like if already done:
 
@@ -135,10 +150,10 @@ describe('Verify and get tokens', () => {
   
   it('Verify operation should give you tokens', (done) => {
 
-	let resource = "/psp/paymentorders/9ae64dd8-c941-445a-728f-08da00e613b8";
-	const expand = ["some"];
+	let resource = "/psp/paymentorders/1eedc61d-ebed-4c3d-2c8f-08da45551e15";
+	const expand = ["paid"];
 	chai.request(app)
-	  .post('/tokens')
+	  .post('/expand')
 	  .set(headers)
 	  .send({ resource, expand })
 	  .end((err, res) => {
