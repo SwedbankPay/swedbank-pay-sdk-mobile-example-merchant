@@ -13,10 +13,6 @@ const problems = require('./util/problems.js');
  */
 const auth = (req, res, next) => {
     
-    console.log(global.config.merchantToken + " tok!")
-    console.log(global.config.merchantId + " id!")
-    
-    
     if (req.path == constants.appleAppSiteAssociationPath
        || req.path == constants.assetLinksPath) {
         console.log('Skipping authentication middleware for public metadata.');
