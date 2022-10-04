@@ -13,6 +13,18 @@ const problems = require('./util/problems.js');
  */
 const auth = (req, res, next) => {
     
+    if (global.config.merchantToken == "1ea83be9fda7f77609ddb211e62e4124d0647183259f02e58e33d05dfa9dcb80") {
+        console.log("merchantToken matches")
+    } else {
+        console.log("slice " + global.config.merchantToken.slice(0, 4) + " slice")
+    }
+    
+    if (global.config.merchantId == "e485f88c-e176-4af4-8da0-cdc3739fdb8a") {
+        console.log("merchantId matches")
+    } else {
+        console.log("slice " + global.config.merchantId.slice(0, 4) + " slice")
+    }
+    
     if (req.path == constants.appleAppSiteAssociationPath
        || req.path == constants.assetLinksPath) {
         console.log('Skipping authentication middleware for public metadata.');
