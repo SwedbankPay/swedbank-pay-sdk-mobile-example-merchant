@@ -12,6 +12,11 @@ const problems = require('./util/problems.js');
  * @param {object} next our next Express route handler
  */
 const auth = (req, res, next) => {
+    
+    console.log(global.config.merchantToken + " tok!")
+    console.log(global.config.merchantId + " id!")
+    
+    
     if (req.path == constants.appleAppSiteAssociationPath
        || req.path == constants.assetLinksPath) {
         console.log('Skipping authentication middleware for public metadata.');
@@ -29,6 +34,7 @@ const auth = (req, res, next) => {
     console.log('Running authentication middleware.');
 
     const apiKey = req.headers[constants.apiKeyHeaderName];
+    console.log(global.config.apiKey + " key " + apiKey)
 
     if (global.config.apiKey !== apiKey) {
         console.log('Request has a missing or incorrect API key.');
