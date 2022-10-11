@@ -30,8 +30,6 @@ const auth = (req, res, next) => {
     console.log('Running authentication middleware.');
 
     const apiKey = req.headers[constants.apiKeyHeaderName];
-    console.log(global.config.apiKey + " key " + apiKey)
-
     if (global.config.apiKey !== apiKey) {
         console.log('Request has a missing or incorrect API key.');
         problems.sendProblem(res, problems.makeUnauthorizedProblem());
