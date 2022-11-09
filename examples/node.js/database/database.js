@@ -2,14 +2,11 @@
 
 module.exports = class Database {
     constructor() {
-        console.log(`Creating Database instance`);
-
-        // Initialize our fake ID sequence from the system clock at DB creation
-        this.idSequence = new Date().getTime();
-
+        
         // Contains our "database" as an in-memory map ID => purchaseData
         this.db = { pspId: {} };
     }
+    
 
     /**
      * Inserts a new purchase into the database.
@@ -18,8 +15,8 @@ module.exports = class Database {
      * @returns {number} ID allocated for the new purchase
      */
     insertPurchase(purchase) {
-        // Get an ID for the purchase from our ID sequence
-        const id = this.idSequence++;
+        // Get an ID for the purchase by generating a random ID. 
+        const id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
         this.db[id] = purchase;
 

@@ -21,7 +21,7 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "start-dev": "nodemon app.js",
-    "test": "mocha tests/*.js --exit"
+    "test": "export PORT=8081; mocha tests/*.js --exit"
   },
   "keywords": [
     "node",
